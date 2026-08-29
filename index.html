@@ -5,17 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DROP MOD by: Paulo Igor - Gestão de Estoque</title>
     
-    <!-- Ícones diretos para o Android/MIUI reconhecerem -->
-    <link rel="icon" type="image/png" sizes="192x192" href="https://i.ibb.co/M580Zw7n/1787759966265.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="https://i.ibb.co/M580Zw7n/1787759966265.png">
-    <link rel="shortcut icon" href="https://i.ibb.co/M580Zw7n/1787759966265.png">
-
-    <!-- Meta Tags para PWA nativo no Chrome -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="DROP MOD">
-    <meta name="apple-mobile-web-app-title" content="DROP MOD">
-    <meta name="theme-color" content="#0f172a">
+    <link id="favicon-link" rel="icon" type="image/png" href="https://i.ibb.co/M580Zw7n/1787759966265.png">
+    <link id="apple-touch-icon-link" rel="apple-touch-icon" href="https://i.ibb.co/M580Zw7n/1787759966265.png">
+    <link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name": "DROP MOD", "short_name": "DROP MOD", "start_url": "./", "display": "standalone", "background_color": "#0f172a", "theme_color": "#0f172a", "icons": [{"src": "https://i.ibb.co/M580Zw7n/1787759966265.png", "sizes": "192x192", "type": "image/png"}]}'>
 
     <meta property="og:title" content="DROP MOD by: Paulo Igor - Gestão de Estoque">
     <meta property="og:description" content="Sistema móvel de controle de estoque, valoração e caderneta por cliente.">
@@ -110,7 +102,7 @@
                 <img id="logo-mobile-top" src="https://i.ibb.co/M580Zw7n/1787759966265.png" alt="Logo" class="w-8 h-8 rounded-lg object-cover">
                 <div>
                     <span class="font-black text-emerald-400 text-base leading-tight block">DROP MOD</span>
-                    <span class="text-[10px] text-slate-400 block">by: Paulo Igor v.1.17</span>
+                    <span class="text-[10px] text-slate-400 block">by: Paulo Igor v.1.18</span>
                 </div>
             </div>
             <button onclick="toggleMenuMobile()" class="text-white px-3 py-2 rounded-lg bg-emerald-600 font-bold text-sm focus:outline-none shadow">
@@ -144,7 +136,7 @@
             <div class="p-4 text-xs text-slate-400 border-t border-slate-800 flex items-center justify-between">
                 <div>
                     <span id="userInfoSidebar" class="font-bold text-slate-200 block text-[11px]">Perfil: -</span>
-                    <span class="text-[10px] text-slate-500">v.1.17 (seguro)</span>
+                    <span class="text-[10px] text-slate-500">v.1.18 (seguro)</span>
                 </div>
                 <button onclick="logout()" class="bg-red-600/80 hover:bg-red-600 text-white px-2.5 py-1 rounded font-bold text-[10px] transition">Sair</button>
             </div>
@@ -349,30 +341,48 @@
 
             <!-- ABA GERENCIAR & AJUSTAR -->
             <div id="secao-gerenciar" class="space-y-6 hidden">
-                <h1 class="text-xl md:text-2xl font-bold text-slate-800">Gerenciar, Ajustar e Acessos</h1>
+                <h1 class="text-xl md:text-2xl font-bold text-slate-800">Gerenciar, Ajustar, Operadores e Histórico</h1>
                 
-                <!-- PAINEL DE CRIAÇÃO DE OPERADORES (EXCLUSIVO ADM) -->
+                <!-- PAINEL DE CRIAÇÃO DE OPERADORES COM NOME (EXCLUSIVO ADM) -->
                 <div class="bg-white p-5 md:p-6 rounded-xl border-l-4 border-emerald-600 shadow-sm space-y-4">
-                    <h3 class="font-bold text-slate-800">🔑 Gestão de Operadores (Criar Acesso Seguro)</h3>
-                    <p class="text-xs text-slate-500">Gere um usuário e uma senha para que operadores possam acessar a plataforma de forma restrita e independente.</p>
+                    <h3 class="font-bold text-slate-800">🔑 Gestão de Operadores (Com Nome e Senha)</h3>
+                    <p class="text-xs text-slate-500">Cadastre o nome do operador e uma senha para que cada um acesse de forma identificada (Ex: Pedro, Tiago).</p>
                     
                     <form onsubmit="criarOperador(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nome de Usuário</label>
-                            <input type="text" id="novo-op-user" placeholder="Ex: operador1" required class="w-full border border-slate-300 rounded-lg p-2.5 text-xs outline-none">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nome do Operador</label>
+                            <input type="text" id="novo-op-nome" placeholder="Ex: Pedro" required class="w-full border border-slate-300 rounded-lg p-2.5 text-xs outline-none">
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Senha de Acesso</label>
                             <input type="password" id="novo-op-pass" placeholder="••••••••" required class="w-full border border-slate-300 rounded-lg p-2.5 text-xs outline-none">
                         </div>
                         <div class="flex items-end">
-                            <button type="submit" class="w-full bg-emerald-600 text-white py-2.5 rounded-lg text-xs font-bold hover:bg-emerald-700 transition shadow">Gerar Operador</button>
+                            <button type="submit" class="w-full bg-emerald-600 text-white py-2.5 rounded-lg text-xs font-bold hover:bg-emerald-700 transition shadow">Cadastrar Operador</button>
                         </div>
                     </form>
 
                     <div class="pt-3 border-t">
                         <h4 class="text-xs font-bold text-slate-700 mb-2 uppercase">Operadores Ativos</h4>
                         <div id="lista-operadores-ativos" class="space-y-2 max-h-36 overflow-y-auto"></div>
+                    </div>
+                </div>
+
+                <!-- PAINEL DE HISTÓRICO DE MOVIMENTAÇÕES DO ADM -->
+                <div class="bg-white p-5 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h3 class="font-bold text-slate-800">📜 Histórico de Movimentações (Auditoria)</h3>
+                    <p class="text-xs text-slate-500">Registro detalhado de todas as entradas e saídas realizadas por operadores ou administradores.</p>
+                    <div class="overflow-x-auto max-h-60">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 text-slate-500 uppercase">
+                                <tr>
+                                    <th class="p-3">Data / Hora</th>
+                                    <th class="p-3">Ação / Descrição</th>
+                                    <th class="p-3 text-right">Responsável</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-historico-adm" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -529,15 +539,17 @@
     <script>
         let currentUserRole = 'operador';
         let currentTipoLogin = 'operador';
+        let usuarioAtivoSessao = { nome: 'Geral', tipo: 'desconhecido' };
 
-        let banco = JSON.parse(localStorage.getItem('dropmod_banco_v117')) || {
+        let banco = JSON.parse(localStorage.getItem('dropmod_banco_v118')) || {
             nomeLoja: 'DROP MOD',
             logoLoja: 'https://i.ibb.co/M580Zw7n/1787759966265.png',
             adminPassword: '', 
             adminRecoveryKey: '', 
-            operadores: [], 
+            operadores: [], // Guarda objetos { nome, pass }
             produtosBase: [],
             variacoes: [],
+            historico: [], // Guarda logs de movimentações detalhadas
             tamanhos: [
                 { tipo: 'Tamanho', valor: 'P' },
                 { tipo: 'Tamanho', valor: 'M' },
@@ -555,9 +567,10 @@
 
         if(!banco.logoLoja) banco.logoLoja = 'https://i.ibb.co/M580Zw7n/1787759966265.png';
         if(!banco.operadores) banco.operadores = [];
+        if(!banco.historico) banco.historico = [];
 
         function salvarBanco() {
-            localStorage.setItem('dropmod_banco_v117', JSON.stringify(banco));
+            localStorage.setItem('dropmod_banco_v118', JSON.stringify(banco));
         }
 
         // --- CONTROLE DA TELA DE LOGIN ---
@@ -595,17 +608,18 @@
         }
 
         function fazerLoginOperador() {
-            const user = document.getElementById('op-user').value.trim();
+            const nomeUser = document.getElementById('op-user').value.trim();
             const pass = document.getElementById('op-pass').value.trim();
 
-            const opEncontrado = banco.operadores.find(o => o.user === user && o.pass === pass);
+            const opEncontrado = banco.operadores.find(o => o.nome.toLowerCase() === nomeUser.toLowerCase() && o.pass === pass);
             if(!opEncontrado) {
-                alert('Usuário ou senha de operador inválidos.');
+                alert('Nome de operador ou senha inválidos.');
                 return;
             }
 
             currentUserRole = 'operador';
-            concluirLogin(`Operador: ${user}`);
+            usuarioAtivoSessao = { nome: opEncontrado.nome, tipo: 'operador' };
+            concluirLogin(`Operador: ${opEncontrado.nome}`);
         }
 
         function fazerLoginAdmin() {
@@ -637,15 +651,18 @@
             }
 
             currentUserRole = 'admin';
+            usuarioAtivoSessao = { nome: 'Administrador', tipo: 'admin' };
             concluirLogin('Administrador (Total)');
         }
 
         function fecharModalChaveRecuperacao() {
             document.getElementById('modal-chave-recuperacao').classList.add('hidden');
             currentUserRole = 'admin';
+            usuarioAtivoSessao = { nome: 'Administrador', tipo: 'admin' };
             concluirLogin('Administrador (Total)');
         }
 
+        // --- SISTEMA DE RECUPERAÇÃO DE SENHA ---
         function abrirModalRecuperacao() {
             document.getElementById('input-chave-recuperacao').value = '';
             document.getElementById('modal-recuperar-senha').classList.remove('hidden');
@@ -685,34 +702,57 @@
             location.reload();
         }
 
+        // --- GESTÃO DE OPERADORES COM NOME ---
         function criarOperador(e) {
             e.preventDefault();
-            const user = document.getElementById('novo-op-user').value.trim();
+            const nome = document.getElementById('novo-op-nome').value.trim();
             const pass = document.getElementById('novo-op-pass').value.trim();
 
-            if(!user || !pass) return;
+            if(!nome || !pass) return;
 
-            if(banco.operadores.some(o => o.user === user)) {
-                alert('Este nome de usuário já existe.');
+            if(banco.operadores.some(o => o.nome.toLowerCase() === nome.toLowerCase())) {
+                alert('Já existe um operador com este nome.');
                 return;
             }
 
-            banco.operadores.push({ user, pass });
+            banco.operadores.push({ nome, pass });
             salvarBanco();
-            document.getElementById('novo-op-user').value = '';
+            document.getElementById('novo-op-nome').value = '';
             document.getElementById('novo-op-pass').value = '';
             renderizar();
-            alert(`Operador "${user}" criado com sucesso!`);
+            alert(`Operador "${nome}" cadastrado com sucesso!`);
         }
 
-        function excluirOperador(user) {
-            if(confirm(`Deseja remover o acesso do operador "${user}"?`)) {
-                banco.operadores = banco.operadores.filter(o => o.user !== user);
+        function excluirOperador(nome) {
+            if(confirm(`Deseja remover o acesso do operador "${nome}"?`)) {
+                banco.operadores = banco.operadores.filter(o => o.nome !== nome);
                 salvarBanco();
                 renderizar();
             }
         }
 
+        // --- REGISTRO DE MOVIMENTAÇÕES E HISTÓRICO ---
+        function registrarHistoricoMovimentacao(detalhesTexto) {
+            const responsavelFormatado = usuarioAtivoSessao.tipo === 'admin' 
+                ? `Adm(${usuarioAtivoSessao.nome})` 
+                : `Op(${usuarioAtivoSessao.nome})`;
+
+            const agora = new Date();
+            const dataFormatada = `${agora.toLocaleDateString('pt-BR')} às ${agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+
+            banco.historico.unshift({
+                id: 'HIST-' + Date.now(),
+                data: dataFormatada,
+                detalhes: detalhesTexto,
+                responsavel: responsavelFormatado
+            });
+
+            // Mantém apenas os últimos 100 registros para evitar sobrecarga no armazenamento
+            if(banco.historico.length > 100) banco.historico.pop();
+            salvarBanco();
+        }
+
+        // --- SINCRONIZAÇÃO E BACKUP ---
         function exportarBackupGeral() {
             const dados = { banco: JSON.stringify(banco), data: new Date().toISOString() };
             const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
@@ -866,8 +906,11 @@
             const variacao = banco.variacoes.find(v => v.sku === sku);
             if(!variacao) return;
 
+            const pb = banco.produtosBase.find(p => p.id === variacao.produtoBaseId) || { nome: 'Produto' };
+
             if(tipo === 'ENTRADA') {
                 variacao.quantidade += qtd;
+                registrarHistoricoMovimentacao(`Entrada de ${qtd} un(s) do produto ${pb.nome} (${sku})`);
                 alert('Entrada registrada!');
             } else {
                 if(variacao.quantidade < qtd) {
@@ -875,7 +918,8 @@
                     return;
                 }
                 variacao.quantidade -= qtd;
-                alert('Saída registrada!');
+                registrarHistoricoMovimentacao(`Venda / Saída de ${qtd} un(s) do produto ${pb.nome} (${sku})`);
+                alert('Saída / Venda registrada!');
             }
             salvarBanco();
             renderizar();
@@ -1070,10 +1114,22 @@
             if(listaOps) {
                 listaOps.innerHTML = banco.operadores.length ? banco.operadores.map(o => `
                     <div class="flex justify-between items-center p-2 bg-slate-50 rounded border text-xs">
-                        <span>👤 <b>${o.user}</b></span>
-                        <button onclick="excluirOperador('${o.user}')" class="text-red-600 font-bold hover:underline">Remover</button>
+                        <span>👤 <b>${o.nome}</b></span>
+                        <button onclick="excluirOperador('${o.nome}')" class="text-red-600 font-bold hover:underline">Remover</button>
                     </div>
                 `).join('') : '<span class="text-xs text-slate-400 italic">Nenhum operador cadastrado.</span>';
+            }
+
+            // Renderiza o Histórico para o Administrador
+            const tabelaHist = document.getElementById('tabela-historico-adm');
+            if(tabelaHist) {
+                tabelaHist.innerHTML = banco.historico.length ? banco.historico.map(h => `
+                    <tr>
+                        <td class="p-3 text-slate-500 font-mono">${h.data}</td>
+                        <td class="p-3">${h.detalhes}</td>
+                        <td class="p-3 text-right"><span class="bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded">${h.responsavel}</span></td>
+                    </tr>
+                `).join('') : `<tr><td colspan="3" class="p-4 text-center text-slate-400">Nenhum registro no histórico.</td></tr>`;
             }
 
             const selProdBase = document.getElementById('select-prod-base');

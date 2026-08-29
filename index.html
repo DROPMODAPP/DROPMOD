@@ -339,7 +339,7 @@
                 </div>
             </div>
 
-            <!-- ABA GERENCIAR & AJUSTAR -->
+            <!-- ABA GERENCIAR & AJUSTAR (EXCLUSIVO ADMIN) -->
             <div id="secao-gerenciar" class="space-y-6 hidden">
                 <h1 class="text-xl md:text-2xl font-bold text-slate-800">Gerenciar, Ajustar, Operadores e Histórico</h1>
                 
@@ -695,6 +695,17 @@
             document.getElementById('loginModal').classList.add('hidden');
             document.getElementById('appContent').classList.remove('hidden');
             document.getElementById('userInfoSidebar').innerText = `Perfil: ${perfilTexto}`;
+            
+            // Restrição de acesso do operador: Oculta a aba Gerenciar & Ajustar no menu lateral
+            const navGerenciar = document.getElementById('nav-gerenciar');
+            if(navGerenciar) {
+                if(currentUserRole === 'operador') {
+                    navGerenciar.classList.add('hidden');
+                } else {
+                    navGerenciar.classList.remove('hidden');
+                }
+            }
+
             renderizar();
         }
 
@@ -809,6 +820,12 @@
         }
 
         function mudarAba(abaId) {
+            // Restrição de operador: Bloqueia acesso à aba de gerenciar/ajustes caso tentem forçar via código/atalho
+            if(abaId === 'gerenciar' && currentUserRole === 'operador') {
+                alert('Acesso negado: Esta seção é restrita a administradores.');
+                return;
+            }
+
             const abas = ['inicio', 'cadastro', 'entradas', 'saidas', 'caderneta', 'gerenciar'];
             abas.forEach(a => {
                 const elSecao = document.getElementById(`secao-${a}`);
@@ -1061,6 +1078,7 @@
         }
 
         function abrirModalEdicaoProdutoBase(id) {
+            if(currentUserRole !== 'admin') { alert('Acesso negado.'); return; }
             const pb = banco.produtosBase.find(item => item.id === id);
             if(!pb) return;
             document.getElementById('edit-tipo').value = 'produtoBase';
@@ -1074,6 +1092,7 @@
         }
 
         function abrirModalEdicaoVariacao(id) {
+            if(currentUserRole !== 'admin') { alert('Acesso negado.'); return; }
             const v = banco.variacoes.find(item => item.id === id);
             if(!v) return;
             document.getElementById('edit-tipo').value = 'variacao';

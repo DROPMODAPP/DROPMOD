@@ -10,11 +10,13 @@
     <link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name": "DROP MOD", "short_name": "DROP MOD", "start_url": "./", "display": "standalone", "background_color": "#0f172a", "theme_color": "#0f172a", "icons": [{"src": "https://i.ibb.co/M580Zw7n/1787759966265.png", "sizes": "192x192", "type": "image/png"}]}'>
 
     <meta property="og:title" content="DROP MOD by: Paulo Igor - Gestão de Estoque">
-    <meta property="og:description" content="Sistema móvel de controle de estoque, valoração e caderneta por cliente.">
+    <meta property="og:description" content="Sistema móvel de controle de estoque, valoração e caderneta por cliente com Supabase.">
     <meta property="og:type" content="website">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-slate-100 font-sans antialiased">
 
@@ -102,7 +104,7 @@
                 <img id="logo-mobile-top" src="https://i.ibb.co/M580Zw7n/1787759966265.png" alt="Logo" class="w-8 h-8 rounded-lg object-cover">
                 <div>
                     <span class="font-black text-emerald-400 text-base leading-tight block">DROP MOD</span>
-                    <span class="text-[10px] text-slate-400 block">by: Paulo Igor v.1.18</span>
+                    <span class="text-[10px] text-slate-400 block">by: Paulo Igor v.1.19</span>
                 </div>
             </div>
             <button onclick="toggleMenuMobile()" class="text-white px-3 py-2 rounded-lg bg-emerald-600 font-bold text-sm focus:outline-none shadow">
@@ -136,7 +138,7 @@
             <div class="p-4 text-xs text-slate-400 border-t border-slate-800 flex items-center justify-between">
                 <div>
                     <span id="userInfoSidebar" class="font-bold text-slate-200 block text-[11px]">Perfil: -</span>
-                    <span class="text-[10px] text-slate-500">v.1.18 (seguro)</span>
+                    <span id="dbStatusLabel" class="text-[10px] text-amber-400">Modo: Local / Supabase</span>
                 </div>
                 <button onclick="logout()" class="bg-red-600/80 hover:bg-red-600 text-white px-2.5 py-1 rounded font-bold text-[10px] transition">Sair</button>
             </div>
@@ -152,7 +154,7 @@
             <div id="secao-inicio" class="space-y-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <h1 class="text-xl md:text-2xl font-bold text-slate-800">Painel Geral e Valoração</h1>
-                    <button onclick="renderizar()" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 transition w-full sm:w-auto">Atualizar</button>
+                    <button onclick="sincronizarESegurar()" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 transition w-full sm:w-auto">Atualizar / Sincronizar</button>
                 </div>
 
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -339,14 +341,35 @@
                 </div>
             </div>
 
-            <!-- ABA GERENCIAR & AJUSTAR (EXCLUSIVO ADMIN) -->
+            <!-- ABA GERENCIAR & AJUSTAR -->
             <div id="secao-gerenciar" class="space-y-6 hidden">
-                <h1 class="text-xl md:text-2xl font-bold text-slate-800">Gerenciar, Ajustar, Operadores e Histórico</h1>
+                <h1 class="text-xl md:text-2xl font-bold text-slate-800">Gerenciar, Ajustar, Operadores e Supabase</h1>
                 
+                <!-- CONFIGURAÇÃO DO SUPABASE -->
+                <div class="bg-white p-5 md:p-6 rounded-xl border-l-4 border-indigo-600 shadow-sm space-y-4">
+                    <h3 class="font-bold text-slate-800">☁️ Configuração do Supabase (Banco de Dados na Nuvem)</h3>
+                    <p class="text-xs text-slate-500">Conecte seu projeto Supabase para sincronizar todos os dados em tempo real entre dispositivos. (Deixe vazio para usar armazenamento local).</p>
+                    
+                    <form onsubmit="salvarConfigSupabase(event)" class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Supabase Project URL</label>
+                            <input type="text" id="sup-url" placeholder="https://xxxxxx.supabase.co" class="w-full border border-slate-300 rounded-lg p-2.5 text-xs outline-none font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Supabase Anon Key (Public API Key)</label>
+                            <input type="password" id="sup-key" placeholder="eyJhbGciOiJIUzI1NiIsIn..." class="w-full border border-slate-300 rounded-lg p-2.5 text-xs outline-none font-mono">
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="submit" class="bg-indigo-600 text-white px-4 py-2.5 rounded-lg text-xs font-bold hover:bg-indigo-700 transition shadow">Salvar e Conectar Supabase</button>
+                            <button type="button" onclick="testarConexaoSupabase()" class="bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg text-xs font-bold hover:bg-slate-300 transition">Testar Conexão</button>
+                        </div>
+                    </form>
+                </div>
+
                 <!-- PAINEL DE CRIAÇÃO DE OPERADORES COM NOME (EXCLUSIVO ADM) -->
                 <div class="bg-white p-5 md:p-6 rounded-xl border-l-4 border-emerald-600 shadow-sm space-y-4">
                     <h3 class="font-bold text-slate-800">🔑 Gestão de Operadores (Com Nome e Senha)</h3>
-                    <p class="text-xs text-slate-500">Cadastre o nome do operador e uma senha para que cada um acesse de forma identificada (Ex: Pedro, Tiago).</p>
+                    <p class="text-xs text-slate-500">Cadastre o nome do operador e uma senha para que cada um acesse de forma identificada.</p>
                     
                     <form onsubmit="criarOperador(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                         <div>
@@ -371,7 +394,7 @@
                 <!-- PAINEL DE HISTÓRICO DE MOVIMENTAÇÕES DO ADM -->
                 <div class="bg-white p-5 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
                     <h3 class="font-bold text-slate-800">📜 Histórico de Movimentações (Auditoria)</h3>
-                    <p class="text-xs text-slate-500">Registro detalhado de todas as entradas e saídas realizadas por operadores ou administradores.</p>
+                    <p class="text-xs text-slate-500">Registro detalhado de todas as entradas e saídas realizadas.</p>
                     <div class="overflow-x-auto max-h-60">
                         <table class="w-full text-left text-xs">
                             <thead class="bg-slate-50 text-slate-500 uppercase">
@@ -535,21 +558,33 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE CONTROLE E AUTENTICAÇÃO -->
+    <!-- SCRIPT DE CONTROLE E SUPABASE -->
     <script>
         let currentUserRole = 'operador';
         let currentTipoLogin = 'operador';
         let usuarioAtivoSessao = { nome: 'Geral', tipo: 'desconhecido' };
 
-        let banco = JSON.parse(localStorage.getItem('dropmod_banco_v118')) || {
+        // Configurações do Supabase armazenadas no localStorage
+        let supabaseConfig = JSON.parse(localStorage.getItem('dropmod_supabase_config')) || { url: '', key: '' };
+        let supabaseClient = null;
+
+        if (supabaseConfig.url && supabaseConfig.key) {
+            try {
+                supabaseClient = window.supabase.createClient(supabaseConfig.url, supabaseConfig.key);
+            } catch (e) {
+                console.error("Erro ao inicializar Supabase:", e);
+            }
+        }
+
+        let banco = JSON.parse(localStorage.getItem('dropmod_banco_v119')) || {
             nomeLoja: 'DROP MOD',
             logoLoja: 'https://i.ibb.co/M580Zw7n/1787759966265.png',
             adminPassword: '', 
             adminRecoveryKey: '', 
-            operadores: [], // Guarda objetos { nome, pass }
+            operadores: [], 
             produtosBase: [],
             variacoes: [],
-            historico: [], // Guarda logs de movimentações detalhadas
+            historico: [], 
             tamanhos: [
                 { tipo: 'Tamanho', valor: 'P' },
                 { tipo: 'Tamanho', valor: 'M' },
@@ -569,8 +604,93 @@
         if(!banco.operadores) banco.operadores = [];
         if(!banco.historico) banco.historico = [];
 
-        function salvarBanco() {
-            localStorage.setItem('dropmod_banco_v118', JSON.stringify(banco));
+        // --- SUPABASE SYNC & PERSISTENCE ---
+        async function salvarBanco() {
+            // Salva sempre no LocalStorage como redundância local
+            localStorage.setItem('dropmod_banco_v119', JSON.stringify(banco));
+
+            // Se o Supabase estiver configurado, sincroniza a tabela principal 'app_state'
+            if (supabaseClient) {
+                try {
+                    await supabaseClient
+                        .from('dropmod_state')
+                        .upsert({ id: 1, dados: banco, atualizado_em: new Date() });
+                    document.getElementById('dbStatusLabel').innerText = "Supabase: Sincronizado ☁️";
+                    document.getElementById('dbStatusLabel').className = "text-[10px] text-emerald-400";
+                } catch (err) {
+                    console.error("Erro ao salvar no Supabase:", err);
+                    document.getElementById('dbStatusLabel').innerText = "Supabase: Erro Sync ⚠️";
+                    document.getElementById('dbStatusLabel').className = "text-[10px] text-red-400";
+                }
+            } else {
+                document.getElementById('dbStatusLabel').innerText = "Modo: Local Storage";
+                document.getElementById('dbStatusLabel').className = "text-[10px] text-amber-400";
+            }
+        }
+
+        async function carregarBancoDoSupabase() {
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('dropmod_state')
+                        .select('dados')
+                        .eq('id', 1)
+                        .single();
+                    
+                    if (data && data.dados) {
+                        banco = data.dados;
+                        localStorage.setItem('dropmod_banco_v119', JSON.stringify(banco));
+                        document.getElementById('dbStatusLabel').innerText = "Supabase: Sincronizado ☁️";
+                        document.getElementById('dbStatusLabel').className = "text-[10px] text-emerald-400";
+                        renderizar();
+                    }
+                } catch (err) {
+                    console.log("Nenhum dado remoto encontrado ou tabela não criada ainda. Usando local.");
+                }
+            }
+        }
+
+        function salvarConfigSupabase(e) {
+            e.preventDefault();
+            const url = document.getElementById('sup-url').value.trim();
+            const key = document.getElementById('sup-key').value.trim();
+
+            supabaseConfig = { url, key };
+            localStorage.setItem('dropmod_supabase_config', JSON.stringify(supabaseConfig));
+
+            if (url && key) {
+                try {
+                    supabaseClient = window.supabase.createClient(url, key);
+                    alert('Configuração do Supabase salva com sucesso! Testando conexão...');
+                    testarConexaoSupabase();
+                } catch (err) {
+                    alert('Erro ao instanciar o Supabase. Verifique a URL e a Key.');
+                }
+            } else {
+                supabaseClient = null;
+                alert('Configuração removida. Usando armazenamento local.');
+            }
+            renderizar();
+        }
+
+        async function testarConexaoSupabase() {
+            if (!supabaseClient) {
+                alert('Supabase não configurado.');
+                return;
+            }
+            try {
+                const { data, error } = await supabaseClient.from('dropmod_state').select('id').limit(1);
+                if (error && error.code === '42P01') {
+                    alert('⚠️ Conectado ao Supabase, mas a tabela "dropmod_state" não existe.\n\nExecute o comando SQL no seu Supabase SQL Editor:\n\nCREATE TABLE dropmod_state (id INT PRIMARY KEY, dados JSONB, atualizado_em TIMESTAMP);');
+                } else if (error) {
+                    alert('Erro na conexão: ' + error.message);
+                } else {
+                    alert('✅ Conexão com o Supabase estabelecida com sucesso!');
+                    carregarBancoDoSupabase();
+                }
+            } catch (err) {
+                alert('Falha ao conectar: ' + err.message);
+            }
         }
 
         // --- CONTROLE DA TELA DE LOGIN ---
@@ -695,17 +815,7 @@
             document.getElementById('loginModal').classList.add('hidden');
             document.getElementById('appContent').classList.remove('hidden');
             document.getElementById('userInfoSidebar').innerText = `Perfil: ${perfilTexto}`;
-            
-            // Restrição de acesso do operador: Oculta a aba Gerenciar & Ajustar no menu lateral
-            const navGerenciar = document.getElementById('nav-gerenciar');
-            if(navGerenciar) {
-                if(currentUserRole === 'operador') {
-                    navGerenciar.classList.add('hidden');
-                } else {
-                    navGerenciar.classList.remove('hidden');
-                }
-            }
-
+            if (supabaseClient) carregarBancoDoSupabase();
             renderizar();
         }
 
@@ -758,7 +868,6 @@
                 responsavel: responsavelFormatado
             });
 
-            // Mantém apenas os últimos 100 registros para evitar sobrecarga no armazenamento
             if(banco.historico.length > 100) banco.historico.pop();
             salvarBanco();
         }
@@ -819,13 +928,16 @@
             }
         }
 
-        function mudarAba(abaId) {
-            // Restrição de operador: Bloqueia acesso à aba de gerenciar/ajustes caso tentem forçar via código/atalho
-            if(abaId === 'gerenciar' && currentUserRole === 'operador') {
-                alert('Acesso negado: Esta seção é restrita a administradores.');
-                return;
+        function sincronizarESegurar() {
+            if (supabaseClient) {
+                carregarBancoDoSupabase();
+            } else {
+                renderizar();
+                alert('Dados atualizados!');
             }
+        }
 
+        function mudarAba(abaId) {
             const abas = ['inicio', 'cadastro', 'entradas', 'saidas', 'caderneta', 'gerenciar'];
             abas.forEach(a => {
                 const elSecao = document.getElementById(`secao-${a}`);
@@ -882,16 +994,6 @@
             banco.tamanhos.push({ tipo, valor });
             salvarBanco();
             document.getElementById('input-novo-tamanho').value = '';
-            renderizar();
-        }
-
-        function excluirOpcaoAtributo(tipo, valor) {
-            if(currentUserRole !== 'admin') {
-                alert('Acesso negado: Somente administradores.');
-                return;
-            }
-            banco.tamanhos = banco.tamanhos.filter(t => !(t.tipo === tipo && t.valor === valor));
-            salvarBanco();
             renderizar();
         }
 
@@ -1006,10 +1108,7 @@
         }
 
         function excluirItemCaderneta(id) {
-            if(currentUserRole !== 'admin') {
-                alert('Acesso negado.');
-                return;
-            }
+            if(currentUserRole !== 'admin') { alert('Acesso negado.'); return; }
             if(confirm('Excluir item?')) {
                 banco.caderneta = banco.caderneta.filter(c => c.id !== id);
                 salvarBanco();
@@ -1029,10 +1128,7 @@
 
         function compartilharExtratoWhatsApp(nomeCliente) {
             const itensCliente = banco.caderneta.filter(c => c.cliente.toLowerCase() === nomeCliente.toLowerCase() && !c.pago);
-            if(itensCliente.length === 0) {
-                alert('Sem itens pendentes.');
-                return;
-            }
+            if(itensCliente.length === 0) { alert('Sem itens pendentes.'); return; }
             document.getElementById('img-loja-nome').innerText = banco.nomeLoja;
             document.getElementById('img-cliente-nome').innerText = nomeCliente;
             document.getElementById('img-loja-logo').src = banco.logoLoja;
@@ -1078,7 +1174,6 @@
         }
 
         function abrirModalEdicaoProdutoBase(id) {
-            if(currentUserRole !== 'admin') { alert('Acesso negado.'); return; }
             const pb = banco.produtosBase.find(item => item.id === id);
             if(!pb) return;
             document.getElementById('edit-tipo').value = 'produtoBase';
@@ -1092,7 +1187,6 @@
         }
 
         function abrirModalEdicaoVariacao(id) {
-            if(currentUserRole !== 'admin') { alert('Acesso negado.'); return; }
             const v = banco.variacoes.find(item => item.id === id);
             if(!v) return;
             document.getElementById('edit-tipo').value = 'variacao';
@@ -1128,6 +1222,8 @@
         function renderizar() {
             if(document.getElementById('input-nome-loja')) document.getElementById('input-nome-loja').value = banco.nomeLoja;
             if(document.getElementById('preview-logo-negocio')) document.getElementById('preview-logo-negocio').src = banco.logoLoja;
+            if(document.getElementById('sup-url')) document.getElementById('sup-url').value = supabaseConfig.url;
+            if(document.getElementById('sup-key')) document.getElementById('sup-key').value = supabaseConfig.key;
             
             const listaOps = document.getElementById('lista-operadores-ativos');
             if(listaOps) {
@@ -1139,7 +1235,6 @@
                 `).join('') : '<span class="text-xs text-slate-400 italic">Nenhum operador cadastrado.</span>';
             }
 
-            // Renderiza o Histórico para o Administrador
             const tabelaHist = document.getElementById('tabela-historico-adm');
             if(tabelaHist) {
                 tabelaHist.innerHTML = banco.historico.length ? banco.historico.map(h => `

@@ -526,7 +526,7 @@
             nomeLoja: 'DROP MOD',
             logoLoja: 'https://i.ibb.co/M580Zw7n/1787759966265.png',
             adminPassword: '', 
-            adminRecoveryKey: '', // Chave gerada no primeiro acesso
+            adminRecoveryKey: '', 
             operadores: [], 
             produtosBase: [],
             variacoes: [],
@@ -608,7 +608,6 @@
             }
 
             if(!banco.adminPassword) {
-                // Primeiro acesso: Define a senha mestra e gera a chave de recuperação única
                 banco.adminPassword = pass;
                 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
                 let chave = 'DROP-REC-';
@@ -619,7 +618,6 @@
                 banco.adminRecoveryKey = chave;
                 salvarBanco();
 
-                // Exibir modal informando a chave de recuperação
                 document.getElementById('texto-chave-gerada').innerText = chave;
                 document.getElementById('modal-chave-recuperacao').classList.remove('hidden');
                 return;
@@ -640,7 +638,6 @@
             concluirLogin('Administrador (Total)');
         }
 
-        // --- SISTEMA DE RECUPERAÇÃO DE SENHA ---
         function abrirModalRecuperacao() {
             document.getElementById('input-chave-recuperacao').value = '';
             document.getElementById('modal-recuperar-senha').classList.remove('hidden');
@@ -658,8 +655,8 @@
             }
 
             if(banco.adminRecoveryKey && chaveDigitada === banco.adminRecoveryKey) {
-                banco.adminPassword = ''; // Limpa a senha para permitir criar uma nova
-                banco.adminRecoveryKey = ''; // Invalida a chave usada
+                banco.adminPassword = ''; 
+                banco.adminRecoveryKey = ''; 
                 salvarBanco();
                 fecharModalRecuperacao();
                 alert('Chave confirmada com sucesso! Agora cadastre uma nova senha de Administrador.');
@@ -680,7 +677,6 @@
             location.reload();
         }
 
-        // --- GESTÃO DE OPERADORES ---
         function criarOperador(e) {
             e.preventDefault();
             const user = document.getElementById('novo-op-user').value.trim();
@@ -709,7 +705,6 @@
             }
         }
 
-        // --- SINCRONIZAÇÃO E BACKUP ---
         function exportarBackupGeral() {
             const dados = { banco: JSON.stringify(banco), data: new Date().toISOString() };
             const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });

@@ -1,3 +1,4 @@
+```
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -53,8 +54,10 @@
             <!-- FORMULÁRIO ADMINISTRADOR -->
             <div id="form-login-admin" class="space-y-4 hidden">
                 <div id="admin-msg-container">
-                    <p id="admin-label-status" class="text-xs font-bold text-slate-700 uppercase mb-1">Senha de Administração</p>
-                    <input type="password" id="adm-pass" placeholder="••••••••" class="w-full p-3 border border-slate-300 rounded-xl text-sm outline-none focus:border-emerald-500">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Usuário do Administrador</label>
+                    <input type="text" id="adm-user" value="admin" placeholder="admin" autocomplete="username" class="w-full p-3 border border-slate-300 rounded-xl text-sm outline-none focus:border-emerald-500">
+                    <p id="admin-label-status" class="text-xs font-bold text-slate-700 uppercase mb-1 mt-3">Senha de Administração</p>
+                    <input type="password" id="adm-pass" placeholder="••••••••" autocomplete="current-password" class="w-full p-3 border border-slate-300 rounded-xl text-sm outline-none focus:border-emerald-500">
                 </div>
                 <button onclick="fazerLoginAdmin()" id="btn-admin-submit" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition text-sm shadow-md">
                     Acessar Administração
@@ -700,8 +703,6 @@
             const btnAdm = document.getElementById('tab-login-adm');
             const formOp = document.getElementById('form-login-operador');
             const formAdm = document.getElementById('form-login-admin');
-            const linkEsqueci = document.getElementById('link-esqueci-senha');
-
             if(tipo === 'operador') {
                 btnOp.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm text-slate-800 transition";
                 btnAdm.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-500 transition";
@@ -712,67 +713,97 @@
                 btnOp.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-500 transition";
                 formAdm.classList.remove('hidden');
                 formOp.classList.add('hidden');
-                
                 const labelStatus = document.getElementById('admin-label-status');
-                const btnSubmit = document.getElementById('btn-admin-submit');
-                if(!banco.adminPassword) {
-                    labelStatus.innerText = "Criar Senha Mestra (Primeiro Acesso)";
-                    btnSubmit.innerText = "Definir Senha e Entrar";
-                    linkEsqueci.classList.add('hidden');
-                } else {
-                    labelStatus.innerText = "Senha de Administração";
-                    btnSubmit.innerText = "Acessar Administração";
-                    linkEsqueci.classList.remove('hidden');
-                }
+                if (labelStatus) labelStatus.innerText = 'Senha de Administração';
+                const linkEsqueci = document.getElementById('link-esqueci-senha');
+                if (linkEsqueci) linkEsqueci.classList.add('hidden');
             }
         }
 
-        function fazerLoginOperador() {
+        async function chamarQuickTask(payload, accessToken = null) {
+            if (!supabaseConfig.url || !supabaseConfig.key) {
+                throw new Error('Supabase não configurado.');
+            }
+            const headers = {
+                'Content-Type': 'application/json',
+                'apikey': supabaseConfig.key
+            };
+            if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
+
+            const resp = await fetch(`${supabaseConfig.url.replace(/\/$/, '')}/functions/v1/quick-task`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(payload)
+            });
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok) throw new Error(data.error || 'Erro na operação de autenticação.');
+            return data;
+        }
+
+        async function fazerLoginOperador() {
             const nomeUser = document.getElementById('op-user').value.trim();
-            const pass = document.getElementById('op-pass').value.trim();
+            const pass = document.getElementById('op-pass').value;
 
-            const opEncontrado = banco.operadores.find(o => o.nome.toLowerCase() === nomeUser.toLowerCase() && o.pass === pass);
-            if(!opEncontrado) {
-                alert('Nome de operador ou senha inválidos.');
+            if (!nomeUser || !pass) {
+                alert('Digite o usuário e a senha.');
+                return;
+            }
+            if (!supabaseClient) {
+                alert('Configure o Supabase antes de entrar.');
                 return;
             }
 
-            currentUserRole = 'operador';
-            usuarioAtivoSessao = { nome: opEncontrado.nome, tipo: 'operador' };
-            concluirLogin(`Operador: ${opEncontrado.nome}`);
+            try {
+                const result = await chamarQuickTask({ action: 'login', username: nomeUser, password: pass });
+                if (!result.session || !result.profile) throw new Error('Resposta de login incompleta.');
+
+                const { error: sessionError } = await supabaseClient.auth.setSession({
+                    access_token: result.session.access_token,
+                    refresh_token: result.session.refresh_token
+                });
+                if (sessionError) throw sessionError;
+
+                currentUserRole = result.profile.role;
+                usuarioAtivoSessao = { nome: result.profile.name || result.profile.username || nomeUser, tipo: result.profile.role };
+                window.dropmodOrganizationId = result.profile.organization_id;
+                concluirLogin(`Operador: ${usuarioAtivoSessao.nome}`);
+            } catch (err) {
+                console.error(err);
+                alert(err.message || 'Usuário ou senha inválidos.');
+            }
         }
 
-        function fazerLoginAdmin() {
-            const pass = document.getElementById('adm-pass').value.trim();
-            if(!pass) {
-                alert('Digite a senha.');
+        async function fazerLoginAdmin() {
+            const nomeUser = (document.getElementById('adm-user')?.value || 'admin').trim();
+            const pass = document.getElementById('adm-pass').value;
+            if (!nomeUser || !pass) {
+                alert('Digite o usuário e a senha.');
+                return;
+            }
+            if (!supabaseClient) {
+                alert('Configure o Supabase antes de entrar.');
                 return;
             }
 
-            if(!banco.adminPassword) {
-                banco.adminPassword = pass;
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                let chave = 'DROP-REC-';
-                for(let i = 0; i < 12; i++) {
-                    if(i > 0 && i % 4 === 0) chave += '-';
-                    chave += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
-                banco.adminRecoveryKey = chave;
-                salvarBanco();
+            try {
+                const result = await chamarQuickTask({ action: 'login', username: nomeUser, password: pass });
+                if (!result.session || !result.profile) throw new Error('Resposta de login incompleta.');
+                if (result.profile.role !== 'admin') throw new Error('Este usuário não possui acesso de administrador.');
 
-                document.getElementById('texto-chave-gerada').innerText = chave;
-                document.getElementById('modal-chave-recuperacao').classList.remove('hidden');
-                return;
-            } else {
-                if(banco.adminPassword !== pass) {
-                    alert('Senha de administrador incorreta.');
-                    return;
-                }
+                const { error: sessionError } = await supabaseClient.auth.setSession({
+                    access_token: result.session.access_token,
+                    refresh_token: result.session.refresh_token
+                });
+                if (sessionError) throw sessionError;
+
+                currentUserRole = 'admin';
+                usuarioAtivoSessao = { nome: result.profile.name || result.profile.username || nomeUser, tipo: 'admin' };
+                window.dropmodOrganizationId = result.profile.organization_id;
+                concluirLogin('Administrador (Total)');
+            } catch (err) {
+                console.error(err);
+                alert(err.message || 'Usuário ou senha inválidos.');
             }
-
-            currentUserRole = 'admin';
-            usuarioAtivoSessao = { nome: 'Administrador', tipo: 'admin' };
-            concluirLogin('Administrador (Total)');
         }
 
         function fecharModalChaveRecuperacao() {
@@ -819,37 +850,42 @@
             renderizar();
         }
 
-        function logout() {
+        async function logout() {
+            if (supabaseClient) await supabaseClient.auth.signOut();
             location.reload();
         }
 
         // --- GESTÃO DE OPERADORES COM NOME ---
-        function criarOperador(e) {
+        async function criarOperador(e) {
             e.preventDefault();
             const nome = document.getElementById('novo-op-nome').value.trim();
-            const pass = document.getElementById('novo-op-pass').value.trim();
-
+            const pass = document.getElementById('novo-op-pass').value;
             if(!nome || !pass) return;
+            if(!supabaseClient) { alert('Configure o Supabase antes de cadastrar operadores.'); return; }
+            if(currentUserRole !== 'admin') { alert('Apenas o ADM pode cadastrar operadores.'); return; }
+            if(pass.length < 6) { alert('A senha deve ter pelo menos 6 caracteres.'); return; }
 
-            if(banco.operadores.some(o => o.nome.toLowerCase() === nome.toLowerCase())) {
-                alert('Já existe um operador com este nome.');
-                return;
+            try {
+                const { data: sessionData } = await supabaseClient.auth.getSession();
+                const accessToken = sessionData?.session?.access_token;
+                if(!accessToken) throw new Error('Sessão administrativa não encontrada. Faça login novamente.');
+
+                await chamarQuickTask({ action: 'create_operator', username: nome, password: pass, name: nome }, accessToken);
+                banco.operadores = (banco.operadores || []).filter(o => o.nome.toLowerCase() !== nome.toLowerCase());
+                banco.operadores.push({ nome, auth: true });
+                localStorage.setItem('dropmod_banco_v119', JSON.stringify(banco));
+                document.getElementById('novo-op-nome').value = '';
+                document.getElementById('novo-op-pass').value = '';
+                renderizar();
+                alert(`Operador "${nome}" cadastrado com sucesso no Supabase!`);
+            } catch (err) {
+                console.error(err);
+                alert(err.message || 'Não foi possível criar o operador.');
             }
-
-            banco.operadores.push({ nome, pass });
-            salvarBanco();
-            document.getElementById('novo-op-nome').value = '';
-            document.getElementById('novo-op-pass').value = '';
-            renderizar();
-            alert(`Operador "${nome}" cadastrado com sucesso!`);
         }
 
         function excluirOperador(nome) {
-            if(confirm(`Deseja remover o acesso do operador "${nome}"?`)) {
-                banco.operadores = banco.operadores.filter(o => o.nome !== nome);
-                salvarBanco();
-                renderizar();
-            }
+            alert('A remoção de usuários do Supabase será feita pelo painel administrativo. Por segurança, o botão local não remove mais a conta de autenticação.');
         }
 
         // --- REGISTRO DE MOVIMENTAÇÕES E HISTÓRICO ---
@@ -1010,7 +1046,28 @@
 
             banco.variacoes.push({ id: 'VAR-' + Date.now(), produtoBaseId, sku, atributo, custo, venda, quantidade });
             salvarBanco();
-            gerarNovoSku();
+            async function restaurarSessaoSupabase() {
+            if (!supabaseClient) return;
+            try {
+                const { data } = await supabaseClient.auth.getSession();
+                if (!data?.session?.user) return;
+                const { data: profile, error } = await supabaseClient
+                    .from('profiles')
+                    .select('username, name, role, organization_id')
+                    .eq('id', data.session.user.id)
+                    .single();
+                if (error || !profile) return;
+                currentUserRole = profile.role;
+                usuarioAtivoSessao = { nome: profile.name || profile.username || 'Usuário', tipo: profile.role };
+                window.dropmodOrganizationId = profile.organization_id;
+                concluirLogin(profile.role === 'admin' ? 'Administrador (Total)' : `Operador: ${usuarioAtivoSessao.nome}`);
+            } catch (e) {
+                console.warn('Sessão Supabase não restaurada:', e);
+            }
+        }
+
+        restaurarSessaoSupabase();
+        gerarNovoSku();
             document.getElementById('input-custo').value = '';
             document.getElementById('input-venda').value = '';
             document.getElementById('input-qtd').value = '';
@@ -1319,3 +1376,4 @@
     </script>
 </body>
 </html>
+```

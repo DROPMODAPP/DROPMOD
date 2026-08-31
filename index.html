@@ -1,17 +1,16 @@
-```
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DROP MOD by: Paulo Igor - Gestão de Estoque</title>
+    <title>DROP MOD by: Paulo Igor - Gestão Comercial</title>
     
     <link id="favicon-link" rel="icon" type="image/png" href="https://i.ibb.co/M580Zw7n/1787759966265.png">
     <link id="apple-touch-icon-link" rel="apple-touch-icon" href="https://i.ibb.co/M580Zw7n/1787759966265.png">
     <link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name": "DROP MOD", "short_name": "DROP MOD", "start_url": "./", "display": "standalone", "background_color": "#0f172a", "theme_color": "#0f172a", "icons": [{"src": "https://i.ibb.co/M580Zw7n/1787759966265.png", "sizes": "192x192", "type": "image/png"}]}'>
 
-    <meta property="og:title" content="DROP MOD by: Paulo Igor - Gestão de Estoque">
-    <meta property="og:description" content="Sistema móvel de controle de estoque, valoração e caderneta por cliente com Supabase.">
+    <meta property="og:title" content="DROP MOD by: Paulo Igor - Gestão Comercial">
+    <meta property="og:description" content="Sistema universal de gestão comercial, estoque, vendas e caderneta por cliente com Supabase.">
     <meta property="og:type" content="website">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -107,7 +106,7 @@
                 <img id="logo-mobile-top" src="https://i.ibb.co/M580Zw7n/1787759966265.png" alt="Logo" class="w-8 h-8 rounded-lg object-cover">
                 <div>
                     <span class="font-black text-emerald-400 text-base leading-tight block">DROP MOD</span>
-                    <span class="text-[10px] text-slate-400 block">by: Paulo Igor v.1.19</span>
+                    <span class="text-[10px] text-slate-400 block">by: Paulo Igor v.1.20</span>
                 </div>
             </div>
             <button onclick="toggleMenuMobile()" class="text-white px-3 py-2 rounded-lg bg-emerald-600 font-bold text-sm focus:outline-none shadow">
@@ -118,24 +117,27 @@
         <!-- MENU LATERAL -->
         <aside id="menu-lateral" class="w-64 bg-slate-900 text-white fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 md:static transition-transform duration-200 ease-in-out z-50 flex flex-col justify-between shadow-2xl md:shadow-none">
             <div>
-                <div class="p-6 hidden md:flex items-center gap-3 border-b border-slate-800 text-emerald-400">
-                    <img id="logo-desktop-sidebar" src="https://i.ibb.co/M580Zw7n/1787759966265.png" alt="Logo" class="w-10 h-10 rounded-lg object-cover">
-                    <div>
-                        <div class="text-xl font-black leading-tight">DROP MOD</div>
-                        <div class="text-[10px] text-slate-400 font-normal mt-0.5">by: Paulo Igor</div>
+                <div class="p-6 hidden md:block border-b border-slate-800">
+                    <div class="flex items-center justify-center gap-3">
+                        <img id="logo-desktop-sidebar" src="https://i.ibb.co/M580Zw7n/1787759966265.png" alt="Logo da Loja" class="w-10 h-10 rounded-lg object-cover border border-slate-700">
+                        <span class="text-slate-500 font-black">×</span>
+                        <img id="logo-cliente-sidebar" src="https://i.ibb.co/M580Zw7n/1787759966265.png" alt="Logo Cliente" class="w-10 h-10 rounded-lg object-cover border border-slate-700">
                     </div>
                 </div>
                 <div class="p-4 md:hidden flex justify-between items-center border-b border-slate-800 bg-slate-950">
-                    <span class="font-bold text-emerald-400">Menu de Navegação</span>
+                    <div class="flex items-center gap-2">
+                        <img id="logo-cliente-sidebar-mobile" src="https://i.ibb.co/M580Zw7n/1787759966265.png" alt="Logo Cliente" class="w-7 h-7 rounded-lg object-cover">
+                        <span class="font-bold text-emerald-400">Menu</span>
+                    </div>
                     <button onclick="toggleMenuMobile()" class="text-slate-400 hover:text-white font-bold text-xl px-2">✕</button>
                 </div>
                 <nav class="p-4 space-y-2">
-                    <button onclick="mudarAba('inicio')" id="nav-inicio" class="w-full text-left px-4 py-3 rounded-lg bg-emerald-600 font-medium transition text-sm">🏠 Início</button>
-                    <button onclick="mudarAba('cadastro')" id="nav-cadastro" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 font-medium transition text-sm">📝 Cadastro</button>
-                    <button onclick="mudarAba('entradas')" id="nav-entradas" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 font-medium transition text-sm">📥 Entradas</button>
-                    <button onclick="mudarAba('saidas')" id="nav-saidas" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 font-medium transition text-sm">📤 Saídas</button>
-                    <button onclick="mudarAba('caderneta')" id="nav-caderneta" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 font-medium transition text-sm">📖 Caderneta</button>
-                    <button onclick="mudarAba('gerenciar')" id="nav-gerenciar" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 font-medium transition text-sm">⚙️ Gerenciar & Ajustar</button>
+                    <button onclick="mudarAba('inicio')" id="nav-inicio" class="w-full text-left px-4 py-3 rounded-lg bg-emerald-600 font-medium transition text-sm">Início</button>
+                    <button onclick="mudarAba('cadastro')" id="nav-cadastro" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 font-medium transition text-sm">Cadastro</button>
+                    <button onclick="mudarAba('entradas')" id="nav-entradas" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 font-medium transition text-sm">Entradas</button>
+                    <button onclick="mudarAba('saidas')" id="nav-saidas" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 font-medium transition text-sm">Saídas</button>
+                    <button onclick="mudarAba('caderneta')" id="nav-caderneta" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 font-medium transition text-sm">Caderneta</button>
+                    <button onclick="mudarAba('gerenciar')" id="nav-gerenciar" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 font-medium transition text-sm">Gerenciar & Ajustar</button>
                 </nav>
             </div>
             <div class="p-4 text-xs text-slate-400 border-t border-slate-800 flex items-center justify-between">
@@ -307,23 +309,42 @@
 
             <!-- ABA CADERNETA -->
             <div id="secao-caderneta" class="space-y-6 hidden">
-                <h1 class="text-xl md:text-2xl font-bold text-slate-800">📖 Caderneta de Clientes (Fiados)</h1>
+                <h1 class="text-xl md:text-2xl font-bold text-slate-800">Caderneta de Clientes (Fiados)</h1>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white p-5 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
                         <h3 class="font-bold text-slate-800 border-b pb-2">Adicionar Item / Dívida ao Cliente</h3>
                         <form onsubmit="adicionarCaderneta(event)" class="space-y-4">
                             <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nº de Registro do Cliente</label>
+                                <input type="text" id="cad-registro" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="Ex: 000123" inputmode="numeric" onblur="preencherClientePorRegistro()">
+                                <p class="text-[10px] text-slate-400 mt-1">O número leva diretamente ao cliente e evita erros de nome.</p>
+                            </div>
+                            <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nome do Cliente / Loja</label>
-                                <input type="text" id="cad-cliente" list="lista-sugestao-clientes" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="Digite ou selecione o cliente">
+                                <input type="text" id="cad-cliente" list="lista-sugestao-clientes" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="Digite o nome">
                                 <datalist id="lista-sugestao-clientes"></datalist>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Logo do Cliente (opcional)</label>
+                                <input type="file" id="cad-logo-cliente" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-700">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Produto / SKU</label>
+                                <select id="cad-sku" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500 bg-white"></select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Quantidade</label>
+                                    <input type="number" id="cad-qtd" min="1" value="1" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Valor Devido (R$)</label>
+                                    <input type="number" step="0.01" id="cad-valor" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="0.00">
+                                </div>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Descrição do Produto / Peça</label>
                                 <input type="text" id="cad-descricao" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="Ex: Perfume 100ml, Camisa...">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Valor Devido (R$)</label>
-                                <input type="number" step="0.01" id="cad-valor" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="0.00">
                             </div>
                             <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 transition text-sm">Adicionar à Conta do Cliente</button>
                         </form>
@@ -339,7 +360,10 @@
                 </div>
 
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden p-5">
-                    <h3 class="font-bold text-slate-800 mb-4">Clientes Cadastrados</h3>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                        <h3 class="font-bold text-slate-800">Clientes Cadastrados</h3>
+                        <input id="busca-caderneta" type="search" oninput="renderizar()" class="w-full sm:w-72 border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:border-emerald-500" placeholder="Buscar por nome ou nº de registro">
+                    </div>
                     <div id="lista-clientes-caderneta" class="space-y-4"></div>
                 </div>
             </div>
@@ -579,7 +603,7 @@
             }
         }
 
-        let banco = JSON.parse(localStorage.getItem('dropmod_banco_v119')) || {
+        let banco = JSON.parse(localStorage.getItem('dropmod_banco_v120')) || {
             nomeLoja: 'DROP MOD',
             logoLoja: 'https://i.ibb.co/M580Zw7n/1787759966265.png',
             adminPassword: '', 
@@ -600,17 +624,19 @@
                 { tipo: 'ML', valor: '100ml' }
             ],
             categorias: ['Vestuário', 'Calçados', 'Perfumaria', 'Acessórios'],
-            caderneta: []
+            caderneta: [],
+            clientes: []
         };
 
         if(!banco.logoLoja) banco.logoLoja = 'https://i.ibb.co/M580Zw7n/1787759966265.png';
         if(!banco.operadores) banco.operadores = [];
         if(!banco.historico) banco.historico = [];
+        if(!banco.clientes) banco.clientes = [];
 
         // --- SUPABASE SYNC & PERSISTENCE ---
         async function salvarBanco() {
             // Salva sempre no LocalStorage como redundância local
-            localStorage.setItem('dropmod_banco_v119', JSON.stringify(banco));
+            localStorage.setItem('dropmod_banco_v120', JSON.stringify(banco));
 
             // Se o Supabase estiver configurado, sincroniza a tabela principal 'app_state'
             if (supabaseClient) {
@@ -642,7 +668,7 @@
                     
                     if (data && data.dados) {
                         banco = data.dados;
-                        localStorage.setItem('dropmod_banco_v119', JSON.stringify(banco));
+                        localStorage.setItem('dropmod_banco_v120', JSON.stringify(banco));
                         document.getElementById('dbStatusLabel').innerText = "Supabase: Sincronizado ☁️";
                         document.getElementById('dbStatusLabel').className = "text-[10px] text-emerald-400";
                         renderizar();
@@ -873,7 +899,7 @@
                 await chamarQuickTask({ action: 'create_operator', username: nome, password: pass, name: nome }, accessToken);
                 banco.operadores = (banco.operadores || []).filter(o => o.nome.toLowerCase() !== nome.toLowerCase());
                 banco.operadores.push({ nome, auth: true });
-                localStorage.setItem('dropmod_banco_v119', JSON.stringify(banco));
+                localStorage.setItem('dropmod_banco_v120', JSON.stringify(banco));
                 document.getElementById('novo-op-nome').value = '';
                 document.getElementById('novo-op-pass').value = '';
                 renderizar();
@@ -1089,41 +1115,125 @@
                 registrarHistoricoMovimentacao(`Entrada de ${qtd} un(s) do produto ${pb.nome} (${sku})`);
                 alert('Entrada registrada!');
             } else {
-                if(variacao.quantidade < qtd) {
-                    alert('Estoque insuficiente!');
-                    return;
-                }
                 variacao.quantidade -= qtd;
-                registrarHistoricoMovimentacao(`Venda / Saída de ${qtd} un(s) do produto ${pb.nome} (${sku})`);
+                registrarHistoricoMovimentacao(`VENDA DIRETA — Saída de ${qtd} un(s) do produto ${pb.nome} (${sku}).`);
+                if(variacao.quantidade < 0) {
+                    registrarHistoricoMovimentacao(`ALERTA DE DIVERGÊNCIA — Estoque negativo após venda direta: ${pb.nome} (${sku}) = ${variacao.quantidade} un.`);
+                    alert('Venda registrada. O estoque ficou negativo e a divergência foi registrada no Histórico.');
+                }
                 alert('Saída / Venda registrada!');
             }
             salvarBanco();
             renderizar();
         }
 
-        function adicionarCaderneta(e) {
+        async function adicionarCaderneta(e) {
             e.preventDefault();
+
+            const registro = document.getElementById('cad-registro').value.trim();
             const clienteInput = document.getElementById('cad-cliente').value.trim();
             const descricao = document.getElementById('cad-descricao').value.trim();
+            const sku = document.getElementById('cad-sku').value;
+            const qtd = Math.max(1, parseInt(document.getElementById('cad-qtd').value) || 1);
             const valor = parseFloat(document.getElementById('cad-valor').value);
-            if(!clienteInput || !descricao || isNaN(valor)) return;
 
+            if(!registro || !clienteInput || !descricao || !sku || isNaN(valor) || valor < 0) return;
+
+            const variacao = banco.variacoes.find(v => v.sku === sku);
+            if(!variacao) { alert('Produto/SKU não encontrado.'); return; }
+
+            const pb = banco.produtosBase.find(p => p.id === variacao.produtoBaseId) || { nome: 'Produto' };
             const clienteNome = clienteInput.charAt(0).toUpperCase() + clienteInput.slice(1);
+            const arquivoLogo = document.getElementById('cad-logo-cliente')?.files?.[0];
+
+            let cliente = banco.clientes.find(c => String(c.registro) === String(registro));
+            if(cliente && cliente.nome.toLowerCase() !== clienteNome.toLowerCase()) {
+                if(!confirm(`O registro ${registro} já pertence a "${cliente.nome}". Usar este registro mesmo assim?`)) return;
+            }
+
+            let logoCliente = cliente?.logo || '';
+            if(arquivoLogo) logoCliente = await lerArquivoComoDataURL(arquivoLogo);
+
+            if(!cliente) {
+                cliente = { id: 'CLI-' + Date.now(), registro, nome: clienteNome, logo: logoCliente || '', criadoEm: new Date().toISOString() };
+                banco.clientes.push(cliente);
+            } else {
+                cliente.nome = clienteNome;
+                if(logoCliente) cliente.logo = logoCliente;
+            }
+
+            // A Caderneta representa uma venda fiada: finalização gera baixa de estoque.
+            variacao.quantidade -= qtd;
+
             const agora = new Date();
-            banco.caderneta.push({
+            const item = {
                 id: 'CAD-' + Date.now(),
                 cliente: clienteNome,
+                registroCliente: registro,
+                logoCliente: cliente.logo || '',
+                sku,
+                produtoBaseId: variacao.produtoBaseId,
+                quantidade: qtd,
                 descricao,
                 valor,
                 pago: false,
                 dataCompra: `Comprado em ${agora.toLocaleDateString('pt-BR')} às ${agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`,
                 dataQuitacao: null
-            });
+            };
+
+            banco.caderneta.push(item);
+
+            registrarHistoricoMovimentacao(
+                `CADERNETA — ${clienteNome} (#${registro}): ${qtd} un(s) de ${pb.nome} (${sku}) adicionadas à conta. Estoque -${qtd}.`
+            );
+
+            if(variacao.quantidade < 0) {
+                registrarHistoricoMovimentacao(
+                    `ALERTA DE DIVERGÊNCIA — Estoque negativo após Caderneta: ${pb.nome} (${sku}) = ${variacao.quantidade} un.`
+                );
+                alert('Caderneta registrada, mas o estoque ficou negativo. A divergência foi registrada no Histórico para conferência.');
+            } else {
+                alert('Item adicionado à Caderneta e estoque atualizado!');
+            }
+
             salvarBanco();
+            document.getElementById('cad-registro').value = '';
             document.getElementById('cad-cliente').value = '';
             document.getElementById('cad-descricao').value = '';
+            document.getElementById('cad-sku').value = '';
+            document.getElementById('cad-qtd').value = '1';
             document.getElementById('cad-valor').value = '';
+            document.getElementById('cad-logo-cliente').value = '';
             renderizar();
+        }
+
+        async function lerArquivoComoDataURL(arquivo) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(arquivo);
+            });
+        }
+
+        function preencherClientePorRegistro() {
+            const registro = document.getElementById('cad-registro')?.value.trim();
+            if(!registro) return;
+            const cliente = banco.clientes.find(c => String(c.registro) === String(registro));
+            if(!cliente) return;
+
+            document.getElementById('cad-cliente').value = cliente.nome || '';
+            const logo = document.getElementById('cad-logo-cliente');
+            if(logo) logo.dataset.logoExistente = cliente.logo || '';
+            atualizarLogoClienteSelecionado(cliente.logo || '');
+        }
+
+        function atualizarLogoClienteSelecionado(logo) {
+            const desktop = document.getElementById('logo-cliente-sidebar');
+            const mobile = document.getElementById('logo-cliente-sidebar-mobile');
+            const recibo = document.getElementById('img-cliente-logo');
+            const fallback = banco.logoLoja || 'https://i.ibb.co/M580Zw7n/1787759966265.png';
+            [desktop, mobile, recibo].forEach(el => { if(el) el.src = logo || fallback; });
         }
 
         function abaterValorParcial(clienteName) {
@@ -1151,6 +1261,7 @@
                 dataCompra: `Abatimento em ${agora.toLocaleDateString('pt-BR')}`,
                 dataQuitacao: `Quitado via ${formaPagamento}`
             });
+            registrarHistoricoMovimentacao(`CADERNETA — ${clienteName}: abatimento de R$ ${valorAbatimento.toFixed(2)} via ${formaPagamento}.`);
             salvarBanco();
             renderizar();
         }
@@ -1159,6 +1270,10 @@
             const item = banco.caderneta.find(c => c.id === id);
             if(item) {
                 item.pago = !item.pago;
+                item.dataQuitacao = item.pago ? new Date().toLocaleString('pt-BR') : null;
+                registrarHistoricoMovimentacao(
+                    `CADERNETA — ${item.pago ? 'Pagamento' : 'Reabertura'}: ${item.cliente} (#${item.registroCliente || 'sem registro'}) — ${item.descricao} — R$ ${item.valor.toFixed(2)}.`
+                );
                 salvarBanco();
                 renderizar();
             }
@@ -1166,11 +1281,55 @@
 
         function excluirItemCaderneta(id) {
             if(currentUserRole !== 'admin') { alert('Acesso negado.'); return; }
-            if(confirm('Excluir item?')) {
+            const item = banco.caderneta.find(c => c.id === id);
+            if(!item) return;
+
+            if(confirm('Excluir item da Caderneta? O produto será estornado ao estoque quando houver SKU vinculado.')) {
+                if(item.sku && item.quantidade) {
+                    const variacao = banco.variacoes.find(v => v.sku === item.sku);
+                    if(variacao) {
+                        variacao.quantidade += item.quantidade;
+                        registrarHistoricoMovimentacao(`ESTORNO — CADERNETA: ${item.quantidade} un(s) de ${item.descricao} (${item.sku}) retornadas ao estoque. Cliente: ${item.cliente}.`);
+                    }
+                }
                 banco.caderneta = banco.caderneta.filter(c => c.id !== id);
+                registrarHistoricoMovimentacao(`CADERNETA — Item removido: ${item.cliente} (#${item.registroCliente || 'sem registro'}) — ${item.descricao}.`);
                 salvarBanco();
                 renderizar();
             }
+        }
+
+        function trocarItemCaderneta(id) {
+            const item = banco.caderneta.find(c => c.id === id);
+            if(!item || !item.sku) { alert('Este registro antigo não possui SKU vinculado para troca.'); return; }
+
+            const novaSku = prompt('Digite o novo SKU para a troca:', '');
+            if(!novaSku) return;
+            const novaVariacao = banco.variacoes.find(v => v.sku === novaSku.trim());
+            if(!novaVariacao) { alert('Novo SKU não encontrado.'); return; }
+
+            const novaQtd = Math.max(1, parseInt(prompt('Quantidade do novo produto:', String(item.quantidade || 1)) || 1));
+            const valorNovo = parseFloat((prompt('Novo valor devido (R$):', String(item.valor.toFixed(2))) || '').replace(',', '.'));
+            if(isNaN(valorNovo) || valorNovo < 0) { alert('Valor inválido.'); return; }
+
+            const skuAntigo = item.sku;
+            const antigaVariacao = banco.variacoes.find(v => v.sku === skuAntigo);
+            if(antigaVariacao) antigaVariacao.quantidade += (item.quantidade || 1);
+            novaVariacao.quantidade -= novaQtd;
+
+            const pbNovo = banco.produtosBase.find(p => p.id === novaVariacao.produtoBaseId) || { nome: 'Produto' };
+            item.sku = novaSku.trim();
+            item.produtoBaseId = novaVariacao.produtoBaseId;
+            item.quantidade = novaQtd;
+            item.descricao = `${pbNovo.nome} (${novaVariacao.atributo})`;
+            item.valor = valorNovo;
+            item.pago = false;
+            item.dataTroca = new Date().toLocaleString('pt-BR');
+
+            registrarHistoricoMovimentacao(`ESTORNO — TROCA: ${item.cliente}: SKU ${skuAntigo} estornado ao estoque; novo produto ${item.sku} registrado.`);
+            salvarBanco();
+            renderizar();
+            alert('Troca registrada: produto antigo estornado e novo produto baixado do estoque.');
         }
 
         function quitarClienteInteiro(nomeCliente) {
@@ -1178,6 +1337,7 @@
                 banco.caderneta.forEach(c => {
                     if(c.cliente.toLowerCase() === nomeCliente.toLowerCase() && !c.pago) c.pago = true;
                 });
+                registrarHistoricoMovimentacao(`CADERNETA — Quitação integral: ${nomeCliente}.`);
                 salvarBanco();
                 renderizar();
             }
@@ -1186,15 +1346,19 @@
         function compartilharExtratoWhatsApp(nomeCliente) {
             const itensCliente = banco.caderneta.filter(c => c.cliente.toLowerCase() === nomeCliente.toLowerCase() && !c.pago);
             if(itensCliente.length === 0) { alert('Sem itens pendentes.'); return; }
+
+            const cliente = banco.clientes.find(c => c.nome.toLowerCase() === nomeCliente.toLowerCase()) || {};
             document.getElementById('img-loja-nome').innerText = banco.nomeLoja;
-            document.getElementById('img-cliente-nome').innerText = nomeCliente;
+            document.getElementById('img-cliente-nome').innerText = `${nomeCliente}${cliente.registro ? ` (#${cliente.registro})` : ''}`;
             document.getElementById('img-loja-logo').src = banco.logoLoja;
+            document.getElementById('img-cliente-logo').src = cliente.logo || itensCliente[0].logoCliente || banco.logoLoja;
+            atualizarLogoClienteSelecionado(cliente.logo || itensCliente[0].logoCliente || '');
 
             let subtotalGeral = 0;
             let htmlItensImg = '';
             itensCliente.forEach(item => {
                 subtotalGeral += item.valor;
-                htmlItensImg += `<div class="flex justify-between py-1 border-b text-xs"><span class="font-bold">${item.descricao}</span><span>R$ ${item.valor.toFixed(2)}</span></div>`;
+                htmlItensImg += `<div class="flex justify-between py-1 border-b text-xs"><span class="font-bold">${item.quantidade ? `${item.quantidade}x ` : ''}${item.descricao}</span><span>R$ ${item.valor.toFixed(2)}</span></div>`;
             });
             document.getElementById('img-lista-itens').innerHTML = htmlItensImg;
             document.getElementById('img-valor-total').innerText = `R$ ${subtotalGeral.toFixed(2)}`;
@@ -1279,6 +1443,10 @@
         function renderizar() {
             if(document.getElementById('input-nome-loja')) document.getElementById('input-nome-loja').value = banco.nomeLoja;
             if(document.getElementById('preview-logo-negocio')) document.getElementById('preview-logo-negocio').src = banco.logoLoja;
+            if(document.getElementById('logo-desktop-sidebar')) document.getElementById('logo-desktop-sidebar').src = banco.logoLoja;
+            atualizarLogoClienteSelecionado(
+                (document.getElementById('cad-registro')?.value && banco.clientes.find(c => String(c.registro) === String(document.getElementById('cad-registro').value.trim()))?.logo) || banco.logoLoja
+            );
             if(document.getElementById('sup-url')) document.getElementById('sup-url').value = supabaseConfig.url;
             if(document.getElementById('sup-key')) document.getElementById('sup-key').value = supabaseConfig.key;
             
@@ -1343,23 +1511,66 @@
             if(document.getElementById('select-sku-saida')) document.getElementById('select-sku-saida').innerHTML = optionsSkus;
 
             let totalCad = 0;
-            const clientes = [...new Set(banco.caderneta.map(c => c.cliente))];
-            if(document.getElementById('lista-sugestao-clientes')) document.getElementById('lista-sugestao-clientes').innerHTML = clientes.map(c => `<option value="${c}">`).join('');
-            
+            const buscaCad = (document.getElementById('busca-caderneta')?.value || '').trim().toLowerCase();
+            const clientesNomes = [...new Set(banco.caderneta.map(c => c.cliente))];
+
+            const clientesFiltrados = clientesNomes.filter(cli => {
+                const registro = banco.clientes.find(c => c.nome.toLowerCase() === cli.toLowerCase())?.registro
+                    || banco.caderneta.find(c => c.cliente.toLowerCase() === cli.toLowerCase())?.registroCliente
+                    || '';
+                return !buscaCad || cli.toLowerCase().includes(buscaCad) || String(registro).toLowerCase().includes(buscaCad);
+            });
+
+            if(document.getElementById('lista-sugestao-clientes')) {
+                document.getElementById('lista-sugestao-clientes').innerHTML = clientesNomes.map(c => `<option value="${c}">`).join('');
+            }
+
+            const selCadSku = document.getElementById('cad-sku');
+            if(selCadSku) {
+                selCadSku.innerHTML = '<option value="">Selecione o produto...</option>' + banco.variacoes.map(v => {
+                    const pb = banco.produtosBase.find(p => p.id === v.produtoBaseId) || {};
+                    return `<option value="${v.sku}">${pb.nome || 'Produto'} — ${v.sku} (${v.atributo}) [Est: ${v.quantidade}]</option>`;
+                }).join('');
+            }
+
             let htmlCad = '';
-            clientes.forEach(cli => {
+            clientesFiltrados.forEach(cli => {
                 const itens = banco.caderneta.filter(c => c.cliente === cli);
+                const cadastroCliente = banco.clientes.find(c => c.nome.toLowerCase() === cli.toLowerCase()) || {};
+                const registroCliente = cadastroCliente.registro || itens.find(i => i.registroCliente)?.registroCliente || '—';
+                const logoCliente = cadastroCliente.logo || itens.find(i => i.logoCliente)?.logoCliente || banco.logoLoja;
                 let subCli = 0;
                 let itensHtml = '';
+
                 itens.forEach(i => {
                     if(!i.pago) subCli += i.valor;
                     totalCad += (!i.pago ? i.valor : 0);
-                    itensHtml += `<div class="flex justify-between items-center p-2 bg-slate-50 rounded text-xs"><span><b>${i.descricao}</b> ${i.pago ? '<span class="text-emerald-600">[Pago]</span>' : ''}</span><div class="space-x-1"><span class="font-bold">R$ ${i.valor.toFixed(2)}</span><button onclick="alternarStatusItem('${i.id}')" class="bg-slate-200 px-1.5 py-0.5 rounded">🔁</button>${currentUserRole === 'admin' ? `<button onclick="excluirItemCaderneta('${i.id}')" class="bg-red-500 text-white px-1.5 py-0.5 rounded">✕</button>` : ''}</div></div>`;
+                    itensHtml += `<div class="flex justify-between items-center p-2 bg-slate-50 rounded text-xs">
+                        <span><b>${i.quantidade ? `${i.quantidade}x ` : ''}${i.descricao}</b> ${i.pago ? '<span class="text-emerald-600">[Pago]</span>' : ''}</span>
+                        <div class="space-x-1"><span class="font-bold">R$ ${i.valor.toFixed(2)}</span>
+                        <button onclick="trocarItemCaderneta('${i.id}')" class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded">Troca</button><button onclick="alternarStatusItem('${i.id}')" class="bg-slate-200 px-1.5 py-0.5 rounded">🔁</button>
+                        ${currentUserRole === 'admin' ? `<button onclick="excluirItemCaderneta('${i.id}')" class="bg-red-500 text-white px-1.5 py-0.5 rounded">✕</button>` : ''}</div>
+                    </div>`;
                 });
-                htmlCad += `<div class="border rounded-xl p-4 space-y-2 bg-white"><div class="flex justify-between items-center border-b pb-2"><h4 class="font-black text-sm">${cli} (<span class="text-amber-700">R$ ${subCli.toFixed(2)}</span>)</h4><div class="space-x-1"><button onclick="abaterValorParcial('${cli}')" class="bg-blue-600 text-white px-2 py-1 rounded text-xs">Abater</button><button onclick="compartilharExtratoWhatsApp('${cli}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-xs">WhatsApp</button><button onclick="quitarClienteInteiro('${cli}')" class="bg-slate-800 text-white px-2 py-1 rounded text-xs">Quitar</button></div></div><div class="space-y-1">${itensHtml}</div></div>`;
+
+                htmlCad += `<div class="border rounded-xl p-4 space-y-2 bg-white">
+                    <div class="flex justify-between items-center border-b pb-2 gap-2">
+                        <div class="flex items-center gap-2">
+                            <img src="${logoCliente}" class="w-9 h-9 rounded-lg object-cover border" alt="Logo Cliente">
+                            <h4 class="font-black text-sm">${cli} <span class="text-slate-400 font-normal">#${registroCliente}</span> (<span class="text-amber-700">R$ ${subCli.toFixed(2)}</span>)</h4>
+                        </div>
+                        <div class="space-x-1">
+                            <button onclick="abaterValorParcial('${cli.replace(/'/g, "\\'")}')" class="bg-blue-600 text-white px-2 py-1 rounded text-xs">Abater</button>
+                            <button onclick="compartilharExtratoWhatsApp('${cli.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-xs">WhatsApp</button>
+                            <button onclick="quitarClienteInteiro('${cli.replace(/'/g, "\\'")}')" class="bg-slate-800 text-white px-2 py-1 rounded text-xs">Quitar</button>
+                        </div>
+                    </div>
+                    <div class="space-y-1">${itensHtml}</div>
+                </div>`;
             });
+
             if(document.getElementById('card-total-caderneta')) document.getElementById('card-total-caderneta').innerText = `R$ ${totalCad.toFixed(2)}`;
-            if(document.getElementById('lista-clientes-caderneta')) document.getElementById('lista-clientes-caderneta').innerHTML = htmlCad || `<span class="text-slate-400 text-xs">Nenhum registro.</span>`;
+            if(document.getElementById('lista-clientes-caderneta')) document.getElementById('lista-clientes-caderneta').innerHTML = htmlCad || `<span class="text-slate-400 text-xs">Nenhum registro encontrado.</span>`;
 
             let htmlGer = '';
             banco.produtosBase.forEach(pb => {
@@ -1376,4 +1587,3 @@
     </script>
 </body>
 </html>
-```

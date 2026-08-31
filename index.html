@@ -142,7 +142,10 @@
             </div>
             <div class="p-4 text-xs text-slate-400 border-t border-slate-800 flex items-center justify-between">
                 <div>
-                    <span id="userInfoSidebar" class="font-bold text-slate-200 block text-[11px]">Perfil: -</span>
+                    <div id="userInfoSidebar" class="leading-tight">
+                        <span id="userProfileName" class="font-bold text-slate-200 block text-[11px]">Perfil: -</span>
+                        <span id="userProfileRole" class="font-bold text-slate-300 block text-[10px]">-</span>
+                    </div>
                     <span id="dbStatusLabel" class="text-[10px] text-amber-400">Modo: Local / Supabase</span>
                 </div>
                 <button onclick="logout()" class="bg-red-600/80 hover:bg-red-600 text-white px-2.5 py-1 rounded font-bold text-[10px] transition">Sair</button>
@@ -1020,7 +1023,19 @@
         async function concluirLogin(perfilTexto) {
             document.getElementById('loginModal').classList.add('hidden');
             document.getElementById('appContent').classList.remove('hidden');
-            document.getElementById('userInfoSidebar').innerText = `Perfil: ${perfilTexto}`;
+            const nomePerfil = (usuarioAtivoSessao && usuarioAtivoSessao.nome)
+                ? usuarioAtivoSessao.nome
+                : 'Usuário';
+            const nomeEl = document.getElementById('userProfileName');
+            const roleEl = document.getElementById('userProfileRole');
+
+            if (currentUserRole === 'admin') {
+                nomeEl.innerText = `Perfil: ${nomePerfil}`;
+                roleEl.innerText = 'Administrador (Total)';
+            } else {
+                nomeEl.innerText = `Perfil: ${nomePerfil}`;
+                roleEl.innerText = 'Operador';
+            }
             renderizar();
             if (supabaseClient && obterEmpresaAtual()) {
                 await carregarBancoDoSupabase();

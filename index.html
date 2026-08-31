@@ -143,7 +143,7 @@
             <div class="p-4 text-xs text-slate-400 border-t border-slate-800 flex items-center justify-between">
                 <div>
                     <span id="userInfoSidebar" class="font-bold text-slate-200 block text-[11px]">Perfil: -</span>
-                    <span id="dbStatusLabel" class="text-[10px] text-emerald-400">Supabase: Conectando ☁️</span>
+                    <span id="dbStatusLabel" class="text-[10px] text-amber-400">Modo: Local / Supabase</span>
                 </div>
                 <button onclick="logout()" class="bg-red-600/80 hover:bg-red-600 text-white px-2.5 py-1 rounded font-bold text-[10px] transition">Sair</button>
             </div>
@@ -369,7 +369,7 @@
             </div>
 
             <!-- ABA GERENCIAR & AJUSTAR -->
-            <div class="hidden"><div id="secao-gerenciar" class="space-y-6 hidden">
+            <div id="secao-gerenciar" class="space-y-6 hidden">
                 <h1 class="text-xl md:text-2xl font-bold text-slate-800">Gerenciar, Ajustar, Operadores e Supabase</h1>
                 
                 <!-- CONFIGURAÇÃO DO SUPABASE -->
@@ -391,7 +391,7 @@
                             <button type="button" onclick="testarConexaoSupabase()" class="bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg text-xs font-bold hover:bg-slate-300 transition">Testar Conexão</button>
                         </div>
                     </form>
-                </div></div>
+                </div>
 
                 <!-- PAINEL DE CRIAÇÃO DE OPERADORES COM NOME (EXCLUSIVO ADM) -->
                 <div class="bg-white p-5 md:p-6 rounded-xl border-l-4 border-emerald-600 shadow-sm space-y-4">
@@ -591,98 +591,194 @@
         let currentTipoLogin = 'operador';
         let usuarioAtivoSessao = { nome: 'Geral', tipo: 'desconhecido' };
 
-        // --- SUPABASE FIXO DO APLICATIVO PÚBLICO ---
-        // A configuração pública fica embutida no aplicativo.
-        // A chave abaixo é a Publishable/Anon Key e pode ser usada no frontend.
-        const SUPABASE_URL = 'https://ujjmgocykfrjefpjpnpd.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_mmSrju2wJ-uk9wZO5b8j-g_-BZqZJdi';
-
-        const supabaseConfig = {
-            url: SUPABASE_URL,
-            key: SUPABASE_KEY
-        };
-
+        // Configurações do Supabase armazenadas no localStorage
+        let supabaseConfig = JSON.parse(localStorage.getItem('dropmod_supabase_config')) || { url: '', key: '' };
         let supabaseClient = null;
 
-        try {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        } catch (e) {
-            console.error("Erro ao inicializar Supabase:", e);
+        if (supabaseConfig.url && supabaseConfig.key) {
+            try {
+                supabaseClient = window.supabase.createClient(supabaseConfig.url, supabaseConfig.key);
+            } catch (e) {
+                console.error("Erro ao inicializar Supabase:", e);
+            }
         }
 
-        let banco = JSON.parse(localStorage.getItem('dropmod_banco_v120')) || {
-            nomeLoja: 'DROP MOD',
-            logoLoja: 'https://i.ibb.co/M580Zw7n/1787759966265.png',
-            adminPassword: '', 
-            adminRecoveryKey: '', 
-            operadores: [], 
-            produtosBase: [],
-            variacoes: [],
-            historico: [], 
-            tamanhos: [
-                { tipo: 'Tamanho', valor: 'P' },
-                { tipo: 'Tamanho', valor: 'M' },
-                { tipo: 'Tamanho', valor: 'G' },
-                { tipo: 'Tamanho', valor: 'GG' },
-                { tipo: 'Numeração', valor: '38' },
-                { tipo: 'Numeração', valor: '40' },
-                { tipo: 'Numeração', valor: '42' },
-                { tipo: 'ML', valor: '50ml' },
-                { tipo: 'ML', valor: '100ml' }
-            ],
-            categorias: ['Vestuário', 'Calçados', 'Perfumaria', 'Acessórios'],
-            caderneta: [],
-            clientes: []
-        };
+        // ============================================================
+        // ESTADO POR EMPRESA / ORGANIZAÇÃO
+        // ============================================================
+        let banco = criarBancoInicial();
 
-        if(!banco.logoLoja) banco.logoLoja = 'https://i.ibb.co/M580Zw7n/1787759966265.png';
-        if(!banco.operadores) banco.operadores = [];
-        if(!banco.historico) banco.historico = [];
-        if(!banco.clientes) banco.clientes = [];
+        function criarBancoInicial() {
+            return {
+                nomeLoja: 'DROP MOD',
+                logoLoja: 'https://i.ibb.co/M580Zw7n/1787759966265.png',
+                adminPassword: '',
+                adminRecoveryKey: '',
+                operadores: [],
+                produtosBase: [],
+                variacoes: [],
+                historico: [],
+                tamanhos: [
+                    { tipo: 'Tamanho', valor: 'P' },
+                    { tipo: 'Tamanho', valor: 'M' },
+                    { tipo: 'Tamanho', valor: 'G' },
+                    { tipo: 'Tamanho', valor: 'GG' },
+                    { tipo: 'Numeração', valor: '38' },
+                    { tipo: 'Numeração', valor: '40' },
+                    { tipo: 'Numeração', valor: '42' },
+                    { tipo: 'ML', valor: '50ml' },
+                    { tipo: 'ML', valor: '100ml' }
+                ],
+                categorias: ['Vestuário', 'Calçados', 'Perfumaria', 'Acessórios'],
+                caderneta: [],
+                clientes: []
+            };
+        }
+
+        function normalizarBanco(dados) {
+            const base = criarBancoInicial();
+            const remoto = dados && typeof dados === 'object' ? dados : {};
+            const resultado = { ...base, ...remoto };
+            if (!resultado.logoLoja) resultado.logoLoja = base.logoLoja;
+            if (!Array.isArray(resultado.operadores)) resultado.operadores = [];
+            if (!Array.isArray(resultado.produtosBase)) resultado.produtosBase = [];
+            if (!Array.isArray(resultado.variacoes)) resultado.variacoes = [];
+            if (!Array.isArray(resultado.historico)) resultado.historico = [];
+            if (!Array.isArray(resultado.tamanhos)) resultado.tamanhos = base.tamanhos;
+            if (!Array.isArray(resultado.categorias)) resultado.categorias = base.categorias;
+            if (!Array.isArray(resultado.caderneta)) resultado.caderneta = [];
+            if (!Array.isArray(resultado.clientes)) resultado.clientes = [];
+            return resultado;
+        }
+
+        function obterEmpresaAtual() {
+            return String(window.dropmodOrganizationId || '').trim();
+        }
+
+        function obterChaveLocalEmpresa() {
+            const empresaId = obterEmpresaAtual();
+            return empresaId
+                ? `dropmod_banco_v120_empresa_${empresaId}`
+                : null;
+        }
+
+        function salvarBancoLocal() {
+            const chave = obterChaveLocalEmpresa();
+            if (chave) {
+                localStorage.setItem(chave, JSON.stringify(banco));
+            }
+        }
 
         // --- SUPABASE SYNC & PERSISTENCE ---
         async function salvarBanco() {
-            // Salva sempre no LocalStorage como redundância local
-            localStorage.setItem('dropmod_banco_v120', JSON.stringify(banco));
+            // Nunca mais salva o estado comercial em uma chave global.
+            // Cada empresa possui seu próprio estado local.
+            salvarBancoLocal();
 
-            // Se o Supabase estiver configurado, sincroniza a tabela principal 'app_state'
-            if (supabaseClient) {
-                try {
-                    await supabaseClient
-                        .from('dropmod_state')
-                        .upsert({ id: 1, dados: banco, atualizado_em: new Date() });
-                    document.getElementById('dbStatusLabel').innerText = "Supabase: Sincronizado ☁️";
-                    document.getElementById('dbStatusLabel').className = "text-[10px] text-emerald-400";
-                } catch (err) {
-                    console.error("Erro ao salvar no Supabase:", err);
-                    document.getElementById('dbStatusLabel').innerText = "Supabase: Erro Sync ⚠️";
-                    document.getElementById('dbStatusLabel').className = "text-[10px] text-red-400";
+            const empresaId = obterEmpresaAtual();
+
+            if (!supabaseClient || !empresaId) {
+                const label = document.getElementById('dbStatusLabel');
+                if (label) {
+                    label.innerText = supabaseClient
+                        ? 'Supabase: aguardando empresa ☁️'
+                        : 'Modo: Local Storage';
+                    label.className = supabaseClient
+                        ? 'text-[10px] text-amber-400'
+                        : 'text-[10px] text-amber-400';
                 }
-            } else {
-                document.getElementById('dbStatusLabel').innerText = "Modo: Local Storage";
-                document.getElementById('dbStatusLabel').className = "text-[10px] text-amber-400";
+                return;
+            }
+
+            try {
+                const { error } = await supabaseClient
+                    .from('dropmod_state_empresas')
+                    .upsert({
+                        empresa_id: empresaId,
+                        dados: banco,
+                        atualizado_em: new Date().toISOString()
+                    }, { onConflict: 'empresa_id' });
+
+                if (error) throw error;
+
+                const label = document.getElementById('dbStatusLabel');
+                if (label) {
+                    label.innerText = 'Supabase: Sincronizado ☁️';
+                    label.className = 'text-[10px] text-emerald-400';
+                }
+            } catch (err) {
+                console.error('Erro ao salvar no Supabase:', err);
+                const label = document.getElementById('dbStatusLabel');
+                if (label) {
+                    label.innerText = 'Supabase: Erro Sync ⚠️';
+                    label.className = 'text-[10px] text-red-400';
+                }
             }
         }
 
         async function carregarBancoDoSupabase() {
-            if (supabaseClient) {
+            const empresaId = obterEmpresaAtual();
+            if (!empresaId) return;
+
+            // Começa sempre limpo para impedir que dados da sessão anterior
+            // apareçam enquanto a empresa atual é carregada.
+            banco = criarBancoInicial();
+            const chaveLocal = obterChaveLocalEmpresa();
+
+            if (chaveLocal) {
                 try {
-                    const { data, error } = await supabaseClient
-                        .from('dropmod_state')
-                        .select('dados')
-                        .eq('id', 1)
-                        .single();
-                    
-                    if (data && data.dados) {
-                        banco = data.dados;
-                        localStorage.setItem('dropmod_banco_v120', JSON.stringify(banco));
-                        document.getElementById('dbStatusLabel').innerText = "Supabase: Sincronizado ☁️";
-                        document.getElementById('dbStatusLabel').className = "text-[10px] text-emerald-400";
-                        renderizar();
-                    }
-                } catch (err) {
-                    console.log("Nenhum dado remoto encontrado ou tabela não criada ainda. Usando local.");
+                    const local = JSON.parse(localStorage.getItem(chaveLocal) || 'null');
+                    if (local) banco = normalizarBanco(local);
+                } catch (e) {
+                    console.warn('Cache local da empresa inválido:', e);
                 }
+            }
+
+            if (!supabaseClient) {
+                renderizar();
+                return;
+            }
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('dropmod_state_empresas')
+                    .select('dados')
+                    .eq('empresa_id', empresaId)
+                    .maybeSingle();
+
+                if (error) throw error;
+
+                if (data?.dados) {
+                    banco = normalizarBanco(data.dados);
+                    salvarBancoLocal();
+                } else {
+                    // Primeira entrada desta empresa: cria seu estado vazio.
+                    const { error: insertError } = await supabaseClient
+                        .from('dropmod_state_empresas')
+                        .insert({
+                            empresa_id: empresaId,
+                            dados: banco,
+                            atualizado_em: new Date().toISOString()
+                        });
+
+                    if (insertError) throw insertError;
+                }
+
+                const label = document.getElementById('dbStatusLabel');
+                if (label) {
+                    label.innerText = 'Supabase: Sincronizado ☁️';
+                    label.className = 'text-[10px] text-emerald-400';
+                }
+
+                renderizar();
+            } catch (err) {
+                console.error('Erro ao carregar dados da empresa:', err);
+                const label = document.getElementById('dbStatusLabel');
+                if (label) {
+                    label.innerText = 'Supabase: Erro ao carregar ⚠️';
+                    label.className = 'text-[10px] text-red-400';
+                }
+                renderizar();
             }
         }
 
@@ -715,14 +811,16 @@
                 return;
             }
             try {
-                const { data, error } = await supabaseClient.from('dropmod_state').select('id').limit(1);
-                if (error && error.code === '42P01') {
-                    alert('⚠️ Conectado ao Supabase, mas a tabela "dropmod_state" não existe.\n\nExecute o comando SQL no seu Supabase SQL Editor:\n\nCREATE TABLE dropmod_state (id INT PRIMARY KEY, dados JSONB, atualizado_em TIMESTAMP);');
-                } else if (error) {
+                const { error } = await supabaseClient
+                    .from('dropmod_state_empresas')
+                    .select('empresa_id')
+                    .limit(1);
+
+                if (error) {
                     alert('Erro na conexão: ' + error.message);
                 } else {
                     alert('✅ Conexão com o Supabase estabelecida com sucesso!');
-                    carregarBancoDoSupabase();
+                    if (obterEmpresaAtual()) await carregarBancoDoSupabase();
                 }
             } catch (err) {
                 alert('Falha ao conectar: ' + err.message);
@@ -799,7 +897,7 @@
                 currentUserRole = result.profile.role;
                 usuarioAtivoSessao = { nome: result.profile.name || result.profile.username || nomeUser, tipo: result.profile.role };
                 window.dropmodOrganizationId = result.profile.organization_id;
-                concluirLogin(`Operador: ${usuarioAtivoSessao.nome}`);
+                await concluirLogin(`Operador: ${usuarioAtivoSessao.nome}`);
             } catch (err) {
                 console.error(err);
                 alert(err.message || 'Usuário ou senha inválidos.');
@@ -832,18 +930,18 @@
                 currentUserRole = 'admin';
                 usuarioAtivoSessao = { nome: result.profile.name || result.profile.username || nomeUser, tipo: 'admin' };
                 window.dropmodOrganizationId = result.profile.organization_id;
-                concluirLogin('Administrador (Total)');
+                await concluirLogin('Administrador (Total)');
             } catch (err) {
                 console.error(err);
                 alert(err.message || 'Usuário ou senha inválidos.');
             }
         }
 
-        function fecharModalChaveRecuperacao() {
+        async function fecharModalChaveRecuperacao() {
             document.getElementById('modal-chave-recuperacao').classList.add('hidden');
             currentUserRole = 'admin';
             usuarioAtivoSessao = { nome: 'Administrador', tipo: 'admin' };
-            concluirLogin('Administrador (Total)');
+            await concluirLogin('Administrador (Total)');
         }
 
         // --- SISTEMA DE RECUPERAÇÃO DE SENHA ---
@@ -875,12 +973,14 @@
             }
         }
 
-        function concluirLogin(perfilTexto) {
+        async function concluirLogin(perfilTexto) {
             document.getElementById('loginModal').classList.add('hidden');
             document.getElementById('appContent').classList.remove('hidden');
             document.getElementById('userInfoSidebar').innerText = `Perfil: ${perfilTexto}`;
-            if (supabaseClient) carregarBancoDoSupabase();
             renderizar();
+            if (supabaseClient && obterEmpresaAtual()) {
+                await carregarBancoDoSupabase();
+            }
         }
 
         async function logout() {
@@ -906,7 +1006,7 @@
                 await chamarQuickTask({ action: 'create_operator', username: nome, password: pass, name: nome }, accessToken);
                 banco.operadores = (banco.operadores || []).filter(o => o.nome.toLowerCase() !== nome.toLowerCase());
                 banco.operadores.push({ nome, auth: true });
-                localStorage.setItem('dropmod_banco_v120', JSON.stringify(banco));
+                salvarBancoLocal();
                 document.getElementById('novo-op-nome').value = '';
                 document.getElementById('novo-op-pass').value = '';
                 renderizar();
@@ -1079,28 +1179,7 @@
 
             banco.variacoes.push({ id: 'VAR-' + Date.now(), produtoBaseId, sku, atributo, custo, venda, quantidade });
             salvarBanco();
-            async function restaurarSessaoSupabase() {
-            if (!supabaseClient) return;
-            try {
-                const { data } = await supabaseClient.auth.getSession();
-                if (!data?.session?.user) return;
-                const { data: profile, error } = await supabaseClient
-                    .from('profiles')
-                    .select('username, name, role, organization_id')
-                    .eq('id', data.session.user.id)
-                    .single();
-                if (error || !profile) return;
-                currentUserRole = profile.role;
-                usuarioAtivoSessao = { nome: profile.name || profile.username || 'Usuário', tipo: profile.role };
-                window.dropmodOrganizationId = profile.organization_id;
-                concluirLogin(profile.role === 'admin' ? 'Administrador (Total)' : `Operador: ${usuarioAtivoSessao.nome}`);
-            } catch (e) {
-                console.warn('Sessão Supabase não restaurada:', e);
-            }
-        }
-
-        restaurarSessaoSupabase();
-        gerarNovoSku();
+            gerarNovoSku();
             document.getElementById('input-custo').value = '';
             document.getElementById('input-venda').value = '';
             document.getElementById('input-qtd').value = '';
@@ -1590,6 +1669,43 @@
             if(document.getElementById('tabela-gerenciar')) document.getElementById('tabela-gerenciar').innerHTML = htmlGer || `<tr><td colspan="4" class="p-4 text-center text-slate-400">Nenhum produto.</td></tr>`;
         }
 
+        async function restaurarSessaoSupabase() {
+            if (!supabaseClient) return;
+            try {
+                const { data: sessionData } = await supabaseClient.auth.getSession();
+                const sessionUser = sessionData?.session?.user;
+                if (!sessionUser) return;
+
+                const { data: perfil, error } = await supabaseClient
+                    .from('perfis')
+                    .select('id, empresa_id, nome, usuario, tipo, ativo')
+                    .eq('id', sessionUser.id)
+                    .maybeSingle();
+
+                if (error || !perfil || perfil.ativo === false) return;
+
+                const tipo = String(perfil.tipo || '').trim().toUpperCase();
+                currentUserRole = (tipo === 'ADM' || tipo === 'ADMIN' || tipo === 'ADMINISTRADOR')
+                    ? 'admin'
+                    : 'operador';
+
+                usuarioAtivoSessao = {
+                    nome: perfil.nome || perfil.usuario || 'Usuário',
+                    tipo: currentUserRole
+                };
+
+                window.dropmodOrganizationId = perfil.empresa_id;
+                await concluirLogin(
+                    currentUserRole === 'admin'
+                        ? 'Administrador (Total)'
+                        : `Operador: ${usuarioAtivoSessao.nome}`
+                );
+            } catch (e) {
+                console.warn('Sessão Supabase não restaurada:', e);
+            }
+        }
+
+        restaurarSessaoSupabase();
         gerarNovoSku();
     </script>
 </body>

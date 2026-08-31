@@ -30,10 +30,9 @@
             </div>
 
             <!-- SELETOR DE TIPO DE LOGIN -->
-            <div class="flex rounded-xl bg-slate-100 p-1 gap-1">
+            <div class="flex rounded-xl bg-slate-100 p-1">
                 <button type="button" onclick="mudarTipoLogin('operador')" id="tab-login-op" class="flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm text-slate-800 transition">Operador</button>
                 <button type="button" onclick="mudarTipoLogin('admin')" id="tab-login-adm" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-500 transition">Administrador</button>
-                <button type="button" onclick="mudarTipoLogin('master')" id="tab-login-master" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-500 transition">MASTER</button>
             </div>
 
             <!-- FORMULÁRIO OPERADOR -->
@@ -66,67 +65,6 @@
                     <button type="button" onclick="abrirModalRecuperacao()" id="link-esqueci-senha" class="text-xs text-slate-500 hover:text-slate-900 underline hidden">Esqueci minha senha</button>
                 </div>
             </div>
-
-            <!-- FORMULÁRIO MASTER -->
-            <div id="form-login-master" class="space-y-4 hidden">
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-600">
-                    <b class="text-slate-900">Acesso central do DROP MOD.</b><br>Use o MASTER para criar e administrar as empresas e os respectivos administradores.
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Usuário MASTER</label>
-                    <input type="text" id="master-user" value="master" autocomplete="username" class="w-full p-3 border border-slate-300 rounded-xl text-sm outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Senha MASTER</label>
-                    <input type="password" id="master-pass" placeholder="••••••••" autocomplete="current-password" class="w-full p-3 border border-slate-300 rounded-xl text-sm outline-none focus:border-emerald-500">
-                </div>
-                <button onclick="fazerLoginMaster()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition text-sm shadow-md">
-                    Entrar como MASTER
-                </button>
-                <button type="button" onclick="abrirSetupMaster()" class="w-full text-xs text-slate-500 hover:text-slate-900 underline">Primeiro acesso / configurar MASTER</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- PAINEL MASTER -->
-    <div id="masterContent" class="hidden min-h-screen bg-slate-100">
-        <header class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between shadow-md">
-            <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/M580Zw7n/1787759966265.png" class="w-9 h-9 rounded-lg object-cover" alt="DROP MOD">
-                <div><div class="font-black text-indigo-300">DROP MOD MASTER</div><div class="text-[10px] text-slate-400">Gestão central</div></div>
-            </div>
-            <button onclick="logoutMaster()" class="bg-red-600/80 hover:bg-red-600 px-3 py-2 rounded-lg text-xs font-bold">Sair</button>
-        </header>
-        <main class="max-w-6xl mx-auto p-5 md:p-10 space-y-6">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                <div><h1 class="text-2xl font-black text-slate-900">Empresas</h1><p class="text-sm text-slate-500">Crie a empresa e o ADM que receberá o acesso.</p></div>
-                <button onclick="abrirModalNovaEmpresa()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-xl font-bold text-sm">+ Nova empresa</button>
-            </div>
-            <div id="master-lista-empresas" class="grid md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
-        </main>
-    </div>
-
-    <!-- MODAL DE SETUP DO MASTER -->
-    <div id="modal-setup-master" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden items-center justify-center z-[60] p-4">
-        <div class="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-sm space-y-4">
-            <h3 class="text-lg font-black text-slate-900">Configurar MASTER</h3>
-            <p class="text-xs text-slate-500">Crie a credencial central. Ela não será definida automaticamente pelo sistema.</p>
-            <input id="setup-master-user" value="master" placeholder="Usuário" class="w-full p-3 border border-slate-300 rounded-xl text-sm">
-            <input id="setup-master-pass" type="password" placeholder="Senha MASTER" class="w-full p-3 border border-slate-300 rounded-xl text-sm">
-            <input id="setup-master-pass2" type="password" placeholder="Confirme a senha" class="w-full p-3 border border-slate-300 rounded-xl text-sm">
-            <div class="flex gap-2"><button onclick="fecharSetupMaster()" class="w-1/2 bg-slate-200 py-2.5 rounded-xl text-xs font-bold">Cancelar</button><button onclick="salvarSetupMaster()" class="w-1/2 bg-indigo-600 text-white py-2.5 rounded-xl text-xs font-bold">Salvar MASTER</button></div>
-        </div>
-    </div>
-
-    <!-- MODAL NOVA EMPRESA -->
-    <div id="modal-nova-empresa" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden items-center justify-center z-[60] p-4">
-        <div class="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-md space-y-4">
-            <h3 class="text-lg font-black text-slate-900">Nova empresa</h3>
-            <input id="nova-empresa-nome" placeholder="Nome da empresa" class="w-full p-3 border border-slate-300 rounded-xl text-sm">
-            <input id="novo-adm-nome" placeholder="Nome do ADM" class="w-full p-3 border border-slate-300 rounded-xl text-sm">
-            <input id="novo-adm-user" placeholder="Usuário do ADM (único)" class="w-full p-3 border border-slate-300 rounded-xl text-sm">
-            <input id="novo-adm-pass" type="password" placeholder="Senha inicial do ADM" class="w-full p-3 border border-slate-300 rounded-xl text-sm">
-            <div class="flex gap-2"><button onclick="fecharModalNovaEmpresa()" class="w-1/2 bg-slate-200 py-2.5 rounded-xl text-xs font-bold">Cancelar</button><button onclick="criarEmpresaMaster()" class="w-1/2 bg-indigo-600 text-white py-2.5 rounded-xl text-xs font-bold">Criar empresa + ADM</button></div>
         </div>
     </div>
 
@@ -652,9 +590,6 @@
         let currentUserRole = 'operador';
         let currentTipoLogin = 'operador';
         let usuarioAtivoSessao = { nome: 'Geral', tipo: 'desconhecido' };
-        let masterSessaoAtiva = false;
-        let empresaAtivaId = localStorage.getItem('dropmod_empresa_ativa') || null;
-        let masterDb = JSON.parse(localStorage.getItem('dropmod_master_v1')) || { master: null, empresas: [] };
 
         // Configurações do Supabase armazenadas no localStorage
         let supabaseConfig = JSON.parse(localStorage.getItem('dropmod_supabase_config')) || { url: '', key: '' };
@@ -702,10 +637,6 @@
         async function salvarBanco() {
             // Salva sempre no LocalStorage como redundância local
             localStorage.setItem('dropmod_banco_v120', JSON.stringify(banco));
-            if (empresaAtivaId && masterDb.empresas) {
-                const emp=masterDb.empresas.find(e=>e.id===empresaAtivaId);
-                if(emp) { emp.state=JSON.parse(JSON.stringify(banco)); localStorage.setItem('dropmod_master_v1',JSON.stringify(masterDb)); }
-            }
 
             // Se o Supabase estiver configurado, sincroniza a tabela principal 'app_state'
             if (supabaseClient) {
@@ -792,67 +723,47 @@
         }
 
         // --- CONTROLE DA TELA DE LOGIN ---
-                // --- MASTER / GESTÃO CENTRAL ---
-        async function hashSenha(valor) {
-            const data = new TextEncoder().encode(String(valor));
-            const hash = await crypto.subtle.digest('SHA-256', data);
-            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
-        }
-
-        function abrirSetupMaster() {
-            document.getElementById('modal-setup-master').classList.remove('hidden');
-            document.getElementById('modal-setup-master').classList.add('flex');
-            if (masterDb.master) document.getElementById('setup-master-user').value = masterDb.master.username;
-        }
-        function fecharSetupMaster() {
-            const el=document.getElementById('modal-setup-master'); el.classList.add('hidden'); el.classList.remove('flex');
-        }
-        async function salvarSetupMaster() {
-            const username=(document.getElementById('setup-master-user').value||'master').trim();
-            const pass=document.getElementById('setup-master-pass').value;
-            const pass2=document.getElementById('setup-master-pass2').value;
-            if(!username || pass.length < 6) return alert('Use usuário e uma senha de pelo menos 6 caracteres.');
-            if(pass!==pass2) return alert('As senhas não conferem.');
-            masterDb.master={username, passwordHash:await hashSenha(pass)};
-            localStorage.setItem('dropmod_master_v1',JSON.stringify(masterDb));
-            fecharSetupMaster();
-            alert('MASTER configurado. Agora entre com a credencial criada.');
-            mudarTipoLogin('master');
-        }
-        async function fazerLoginMaster() {
-            const username=(document.getElementById('master-user').value||'master').trim();
-            const pass=document.getElementById('master-pass').value;
-            if(!masterDb.master) return abrirSetupMaster();
-            if(username!==masterDb.master.username || await hashSenha(pass)!==masterDb.master.passwordHash) return alert('Usuário ou senha MASTER inválidos.');
-            masterSessaoAtiva=true; document.getElementById('loginModal').classList.add('hidden'); document.getElementById('masterContent').classList.remove('hidden'); renderMasterEmpresas();
-        }
-        function logoutMaster(){ masterSessaoAtiva=false; document.getElementById('masterContent').classList.add('hidden'); document.getElementById('loginModal').classList.remove('hidden'); mudarTipoLogin('master'); document.getElementById('master-pass').value=''; }
-        function abrirModalNovaEmpresa(){ if(!masterSessaoAtiva) return; const e=document.getElementById('modal-nova-empresa'); e.classList.remove('hidden'); e.classList.add('flex'); }
-        function fecharModalNovaEmpresa(){ const e=document.getElementById('modal-nova-empresa'); e.classList.add('hidden'); e.classList.remove('flex'); }
-        function criarEstadoEmpresa(nome){ return { nomeLoja:nome, logoLoja:'https://i.ibb.co/M580Zw7n/1787759966265.png', adminPassword:'', adminRecoveryKey:'', operadores:[], produtosBase:[], variacoes:[], historico:[], tamanhos:[{tipo:'Tamanho',valor:'P'},{tipo:'Tamanho',valor:'M'},{tipo:'Tamanho',valor:'G'},{tipo:'Tamanho',valor:'GG'}], categorias:['Vestuário','Calçados','Perfumaria','Acessórios'], caderneta:[], clientes:[] }; }
-        async function criarEmpresaMaster(){
-            const nome=(document.getElementById('nova-empresa-nome').value||'').trim(); const admNome=(document.getElementById('novo-adm-nome').value||'').trim(); const user=(document.getElementById('novo-adm-user').value||'').trim().toLowerCase(); const pass=document.getElementById('novo-adm-pass').value;
-            if(!nome||!admNome||!user||pass.length<6) return alert('Preencha empresa, nome do ADM, usuário e senha (mínimo 6 caracteres).');
-            if(masterDb.empresas.some(e=>e.admin.username===user)) return alert('Esse usuário de ADM já existe. Escolha outro.');
-            const id='emp_'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-            masterDb.empresas.push({id,nome,ativa:true,criadaEm:new Date().toISOString(),admin:{nome:admNome,username:user,passwordHash:await hashSenha(pass)},state:criarEstadoEmpresa(nome)});
-            localStorage.setItem('dropmod_master_v1',JSON.stringify(masterDb)); fecharModalNovaEmpresa(); renderMasterEmpresas();
-            document.getElementById('nova-empresa-nome').value=''; document.getElementById('novo-adm-nome').value=''; document.getElementById('novo-adm-user').value=''; document.getElementById('novo-adm-pass').value='';
-            alert('Empresa criada. O ADM já pode entrar com as credenciais definidas.');
-        }
-        function renderMasterEmpresas(){ const box=document.getElementById('master-lista-empresas'); if(!box)return; box.innerHTML=masterDb.empresas.length?masterDb.empresas.map(e=>`<div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"><div class="flex justify-between gap-3"><div><h3 class="font-black text-slate-900">${escapeHtml(e.nome)}</h3><p class="text-xs text-slate-500 mt-1">ADM: <b>${escapeHtml(e.admin.nome)}</b></p><p class="text-xs text-slate-500">Usuário: <b>${escapeHtml(e.admin.username)}</b></p></div><span class="text-[10px] font-black px-2 py-1 rounded-full ${e.ativa?'bg-emerald-100 text-emerald-700':'bg-red-100 text-red-700'}">${e.ativa?'ATIVA':'INATIVA'}</span></div><div class="mt-4 flex gap-2"><button onclick="alternarEmpresaMaster('${e.id}')" class="text-xs font-bold px-3 py-2 rounded-lg bg-slate-100">${e.ativa?'Desativar':'Ativar'}</button><button onclick="mostrarCredencialAdm('${e.id}')" class="text-xs font-bold px-3 py-2 rounded-lg bg-indigo-50 text-indigo-700">Ver acesso</button></div></div>`).join(''):`<div class="md:col-span-2 xl:col-span-3 bg-white border border-dashed border-slate-300 rounded-2xl p-10 text-center text-sm text-slate-400">Nenhuma empresa criada. Clique em <b>+ Nova empresa</b>.</div>`; }
-        function escapeHtml(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-        function alternarEmpresaMaster(id){const e=masterDb.empresas.find(x=>x.id===id); if(!e)return; e.ativa=!e.ativa; localStorage.setItem('dropmod_master_v1',JSON.stringify(masterDb)); renderMasterEmpresas();}
-        function mostrarCredencialAdm(id){const e=masterDb.empresas.find(x=>x.id===id); if(e) alert(`Empresa: ${e.nome}\nADM: ${e.admin.nome}\nUsuário: ${e.admin.username}\n\nA senha não é exibida por segurança.`);}
-
-function mudarTipoLogin(tipo) {
+        function mudarTipoLogin(tipo) {
             currentTipoLogin = tipo;
-            const forms={operador:document.getElementById('form-login-operador'),admin:document.getElementById('form-login-admin'),master:document.getElementById('form-login-master')};
-            Object.entries(forms).forEach(([k,el])=>el?.classList.toggle('hidden',k!==tipo));
-            const tabs={operador:document.getElementById('tab-login-op'),admin:document.getElementById('tab-login-adm'),master:document.getElementById('tab-login-master')};
-            Object.entries(tabs).forEach(([k,el])=>{if(!el)return; el.className=`flex-1 py-2 text-xs font-bold rounded-lg transition ${k===tipo?'bg-white shadow-sm text-slate-800':'text-slate-500'}`;});
-            const sub=document.getElementById('subtitulo-login'); if(sub) sub.innerText=tipo==='master'?'Gestão central do DROP MOD':tipo==='admin'?'Acesso administrativo da empresa':'Acesso do operador';
-            const link=document.getElementById('link-esqueci-senha'); if(link) link.classList.toggle('hidden',tipo!=='admin');
+            const btnOp = document.getElementById('tab-login-op');
+            const btnAdm = document.getElementById('tab-login-adm');
+            const formOp = document.getElementById('form-login-operador');
+            const formAdm = document.getElementById('form-login-admin');
+            if(tipo === 'operador') {
+                btnOp.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm text-slate-800 transition";
+                btnAdm.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-500 transition";
+                formOp.classList.remove('hidden');
+                formAdm.classList.add('hidden');
+            } else {
+                btnAdm.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm text-slate-800 transition";
+                btnOp.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-500 transition";
+                formAdm.classList.remove('hidden');
+                formOp.classList.add('hidden');
+                const labelStatus = document.getElementById('admin-label-status');
+                if (labelStatus) labelStatus.innerText = 'Senha de Administração';
+                const linkEsqueci = document.getElementById('link-esqueci-senha');
+                if (linkEsqueci) linkEsqueci.classList.add('hidden');
+            }
+        }
+
+        async function chamarQuickTask(payload, accessToken = null) {
+            if (!supabaseConfig.url || !supabaseConfig.key) {
+                throw new Error('Supabase não configurado.');
+            }
+            const headers = {
+                'Content-Type': 'application/json',
+                'apikey': supabaseConfig.key
+            };
+            if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
+
+            const resp = await fetch(`${supabaseConfig.url.replace(/\/$/, '')}/functions/v1/quick-task`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(payload)
+            });
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok) throw new Error(data.error || 'Erro na operação de autenticação.');
+            return data;
         }
 
         async function fazerLoginOperador() {
@@ -863,14 +774,10 @@ function mudarTipoLogin(tipo) {
                 alert('Digite o usuário e a senha.');
                 return;
             }
-            const empresaLocal = masterDb.empresas.find(e => e.ativa && e.admin.username === nomeUser);
-            if (empresaLocal) {
-                if (await hashSenha(pass) !== empresaLocal.admin.passwordHash) return alert('Usuário ou senha inválidos.');
-                banco = JSON.parse(JSON.stringify(empresaLocal.state));
-                empresaAtivaId = empresaLocal.id; localStorage.setItem('dropmod_empresa_ativa', empresaAtivaId);
-                currentUserRole='admin'; usuarioAtivoSessao={nome:empresaLocal.admin.nome,tipo:'admin'}; window.dropmodOrganizationId=empresaLocal.id; salvarBanco(); concluirLogin(`Administrador — ${empresaLocal.nome}`); return;
+            if (!supabaseClient) {
+                alert('Configure o Supabase antes de entrar.');
+                return;
             }
-            if (!supabaseClient) { alert('Configure o Supabase antes de entrar.'); return; }
 
             try {
                 const result = await chamarQuickTask({ action: 'login', username: nomeUser, password: pass });
@@ -1186,7 +1093,6 @@ function mudarTipoLogin(tipo) {
         }
 
         restaurarSessaoSupabase();
-        if (!masterDb.master) { /* MASTER será configurado no primeiro acesso */ }
         gerarNovoSku();
             document.getElementById('input-custo').value = '';
             document.getElementById('input-venda').value = '';

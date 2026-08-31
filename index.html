@@ -143,7 +143,7 @@
             <div class="p-4 text-xs text-slate-400 border-t border-slate-800 flex items-center justify-between">
                 <div>
                     <span id="userInfoSidebar" class="font-bold text-slate-200 block text-[11px]">Perfil: -</span>
-                    <span id="dbStatusLabel" class="text-[10px] text-amber-400">Modo: Local / Supabase</span>
+                    <span id="dbStatusLabel" class="text-[10px] text-emerald-400">Supabase: Conectando ☁️</span>
                 </div>
                 <button onclick="logout()" class="bg-red-600/80 hover:bg-red-600 text-white px-2.5 py-1 rounded font-bold text-[10px] transition">Sair</button>
             </div>
@@ -369,7 +369,7 @@
             </div>
 
             <!-- ABA GERENCIAR & AJUSTAR -->
-            <div id="secao-gerenciar" class="space-y-6 hidden">
+            <div class="hidden"><div id="secao-gerenciar" class="space-y-6 hidden">
                 <h1 class="text-xl md:text-2xl font-bold text-slate-800">Gerenciar, Ajustar, Operadores e Supabase</h1>
                 
                 <!-- CONFIGURAÇÃO DO SUPABASE -->
@@ -391,7 +391,7 @@
                             <button type="button" onclick="testarConexaoSupabase()" class="bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg text-xs font-bold hover:bg-slate-300 transition">Testar Conexão</button>
                         </div>
                     </form>
-                </div>
+                </div></div>
 
                 <!-- PAINEL DE CRIAÇÃO DE OPERADORES COM NOME (EXCLUSIVO ADM) -->
                 <div class="bg-white p-5 md:p-6 rounded-xl border-l-4 border-emerald-600 shadow-sm space-y-4">
@@ -591,16 +591,23 @@
         let currentTipoLogin = 'operador';
         let usuarioAtivoSessao = { nome: 'Geral', tipo: 'desconhecido' };
 
-        // Configurações do Supabase armazenadas no localStorage
-        let supabaseConfig = JSON.parse(localStorage.getItem('dropmod_supabase_config')) || { url: '', key: '' };
+        // --- SUPABASE FIXO DO APLICATIVO PÚBLICO ---
+        // A configuração pública fica embutida no aplicativo.
+        // A chave abaixo é a Publishable/Anon Key e pode ser usada no frontend.
+        const SUPABASE_URL = 'https://ujjmgocykfrjefpjpnpd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_mmSrju2wJ-uk9wZO5b8j-g_-BZqZJdi';
+
+        const supabaseConfig = {
+            url: SUPABASE_URL,
+            key: SUPABASE_KEY
+        };
+
         let supabaseClient = null;
 
-        if (supabaseConfig.url && supabaseConfig.key) {
-            try {
-                supabaseClient = window.supabase.createClient(supabaseConfig.url, supabaseConfig.key);
-            } catch (e) {
-                console.error("Erro ao inicializar Supabase:", e);
-            }
+        try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch (e) {
+            console.error("Erro ao inicializar Supabase:", e);
         }
 
         let banco = JSON.parse(localStorage.getItem('dropmod_banco_v120')) || {

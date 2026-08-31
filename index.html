@@ -885,21 +885,41 @@
             }
 
             try {
-                const result = await chamarQuickTask({ action: 'login', username: nomeUser, password: pass });
-                if (!result.session || !result.profile) throw new Error('Resposta de login incompleta.');
-
-                const { error: sessionError } = await supabaseClient.auth.setSession({
-                    access_token: result.session.access_token,
-                    refresh_token: result.session.refresh_token
+                // Login direto pelo Supabase Auth. O perfil da empresa é lido
+                // depois na tabela "perfis", usando empresa_id.
+                const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
+                    email: nomeUser,
+                    password: pass
                 });
-                if (sessionError) throw sessionError;
 
-                currentUserRole = result.profile.role;
-                usuarioAtivoSessao = { nome: result.profile.name || result.profile.username || nomeUser, tipo: result.profile.role };
-                window.dropmodOrganizationId = result.profile.organization_id;
+                if (authError) throw new Error(authError.message || 'Usuário ou senha inválidos.');
+                if (!authData?.user) throw new Error('Usuário autenticado, mas a sessão não foi criada.');
+
+                const { data: perfil, error: perfilError } = await supabaseClient
+                    .from('perfis')
+                    .select('id, empresa_id, nome, usuario, tipo, ativo')
+                    .eq('id', authData.user.id)
+                    .maybeSingle();
+
+                if (perfilError) throw new Error('Não foi possível carregar o perfil: ' + perfilError.message);
+                if (!perfil) throw new Error('Usuário autenticado, mas não possui perfil cadastrado.');
+                if (perfil.ativo === false) throw new Error('Este usuário está desativado.');
+                if (!perfil.empresa_id) throw new Error('O perfil deste usuário não possui empresa vinculada.');
+
+                const tipo = String(perfil.tipo || '').trim().toUpperCase();
+                if (tipo === 'ADM' || tipo === 'ADMIN' || tipo === 'ADMINISTRADOR') {
+                    throw new Error('Este usuário possui acesso de administrador. Entre pela aba Administrador.');
+                }
+
+                currentUserRole = 'operador';
+                usuarioAtivoSessao = {
+                    nome: perfil.nome || perfil.usuario || nomeUser,
+                    tipo: 'operador'
+                };
+                window.dropmodOrganizationId = perfil.empresa_id;
                 await concluirLogin(`Operador: ${usuarioAtivoSessao.nome}`);
             } catch (err) {
-                console.error(err);
+                console.error('Erro no login do operador:', err);
                 alert(err.message || 'Usuário ou senha inválidos.');
             }
         }
@@ -917,22 +937,42 @@
             }
 
             try {
-                const result = await chamarQuickTask({ action: 'login', username: nomeUser, password: pass });
-                if (!result.session || !result.profile) throw new Error('Resposta de login incompleta.');
-                if (result.profile.role !== 'admin') throw new Error('Este usuário não possui acesso de administrador.');
-
-                const { error: sessionError } = await supabaseClient.auth.setSession({
-                    access_token: result.session.access_token,
-                    refresh_token: result.session.refresh_token
+                // Mesmo fluxo do operador: Auth primeiro, perfil depois.
+                // Isso elimina a dependência da Edge Function quick-task para o login.
+                const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
+                    email: nomeUser,
+                    password: pass
                 });
-                if (sessionError) throw sessionError;
+
+                if (authError) throw new Error(authError.message || 'Usuário ou senha inválidos.');
+                if (!authData?.user) throw new Error('Usuário autenticado, mas a sessão não foi criada.');
+
+                const { data: perfil, error: perfilError } = await supabaseClient
+                    .from('perfis')
+                    .select('id, empresa_id, nome, usuario, tipo, ativo')
+                    .eq('id', authData.user.id)
+                    .maybeSingle();
+
+                if (perfilError) throw new Error('Não foi possível carregar o perfil: ' + perfilError.message);
+                if (!perfil) throw new Error('Usuário autenticado, mas não possui perfil cadastrado.');
+                if (perfil.ativo === false) throw new Error('Este usuário está desativado.');
+                if (!perfil.empresa_id) throw new Error('O perfil deste usuário não possui empresa vinculada.');
+
+                const tipo = String(perfil.tipo || '').trim().toUpperCase();
+                if (!(tipo === 'ADM' || tipo === 'ADMIN' || tipo === 'ADMINISTRADOR')) {
+                    await supabaseClient.auth.signOut();
+                    throw new Error('Este usuário não possui acesso de administrador.');
+                }
 
                 currentUserRole = 'admin';
-                usuarioAtivoSessao = { nome: result.profile.name || result.profile.username || nomeUser, tipo: 'admin' };
-                window.dropmodOrganizationId = result.profile.organization_id;
+                usuarioAtivoSessao = {
+                    nome: perfil.nome || perfil.usuario || nomeUser,
+                    tipo: 'admin'
+                };
+                window.dropmodOrganizationId = perfil.empresa_id;
                 await concluirLogin('Administrador (Total)');
             } catch (err) {
-                console.error(err);
+                console.error('Erro no login do administrador:', err);
                 alert(err.message || 'Usuário ou senha inválidos.');
             }
         }

@@ -374,27 +374,7 @@
             <!-- ABA GERENCIAR & AJUSTAR -->
             <div id="secao-gerenciar" class="space-y-6 hidden">
                 <h1 class="text-xl md:text-2xl font-bold text-slate-800">Gerenciar, Ajustar, Operadores e Supabase</h1>
-                
-                <!-- CONFIGURAÇÃO DO SUPABASE -->
-                <div class="bg-white p-5 md:p-6 rounded-xl border-l-4 border-indigo-600 shadow-sm space-y-4">
-                    <h3 class="font-bold text-slate-800">☁️ Configuração do Supabase (Banco de Dados na Nuvem)</h3>
-                    <p class="text-xs text-slate-500">Conecte seu projeto Supabase para sincronizar todos os dados em tempo real entre dispositivos. (Deixe vazio para usar armazenamento local).</p>
-                    
-                    <form onsubmit="salvarConfigSupabase(event)" class="space-y-3">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Supabase Project URL</label>
-                            <input type="text" id="sup-url" placeholder="https://xxxxxx.supabase.co" class="w-full border border-slate-300 rounded-lg p-2.5 text-xs outline-none font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Supabase Anon Key (Public API Key)</label>
-                            <input type="password" id="sup-key" placeholder="eyJhbGciOiJIUzI1NiIsIn..." class="w-full border border-slate-300 rounded-lg p-2.5 text-xs outline-none font-mono">
-                        </div>
-                        <div class="flex gap-2">
-                            <button type="submit" class="bg-indigo-600 text-white px-4 py-2.5 rounded-lg text-xs font-bold hover:bg-indigo-700 transition shadow">Salvar e Conectar Supabase</button>
-                            <button type="button" onclick="testarConexaoSupabase()" class="bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg text-xs font-bold hover:bg-slate-300 transition">Testar Conexão</button>
-                        </div>
-                    </form>
-                </div>
+
 
                 <!-- PAINEL DE CRIAÇÃO DE OPERADORES COM NOME (EXCLUSIVO ADM) -->
                 <div class="bg-white p-5 md:p-6 rounded-xl border-l-4 border-emerald-600 shadow-sm space-y-4">
@@ -595,7 +575,7 @@
         let usuarioAtivoSessao = { nome: 'Geral', tipo: 'desconhecido' };
 
         // Configurações do Supabase armazenadas no localStorage
-        let supabaseConfig = JSON.parse(localStorage.getItem('dropmod_supabase_config')) || { url: '', key: '' };
+        let supabaseConfig = { url: 'https://ujjmgocykfrjefpjpnpd.supabase.co', key: 'sb_publishable_mmSrju2wJ-uk9wZO5b8j-g_-BZqZJdi' };
         let supabaseClient = null;
 
         if (supabaseConfig.url && supabaseConfig.key) {
@@ -787,8 +767,6 @@
 
         function salvarConfigSupabase(e) {
             e.preventDefault();
-            const url = document.getElementById('sup-url').value.trim();
-            const key = document.getElementById('sup-key').value.trim();
 
             supabaseConfig = { url, key };
             localStorage.setItem('dropmod_supabase_config', JSON.stringify(supabaseConfig));
@@ -1592,8 +1570,6 @@
             atualizarLogoClienteSelecionado(
                 (document.getElementById('cad-registro')?.value && banco.clientes.find(c => String(c.registro) === String(document.getElementById('cad-registro').value.trim()))?.logo) || banco.logoLoja
             );
-            if(document.getElementById('sup-url')) document.getElementById('sup-url').value = supabaseConfig.url;
-            if(document.getElementById('sup-key')) document.getElementById('sup-key').value = supabaseConfig.key;
             
             const listaOps = document.getElementById('lista-operadores-ativos');
             if(listaOps) {

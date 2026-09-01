@@ -817,47 +817,61 @@
                 alert('Digite o usuário e a senha.');
                 return;
             }
-            if (!supabaseClient) {
-                alert('Configure o Supabase antes de entrar.');
-                return;
-            }
 
             try {
-                // O login do DROPMOD usa o campo "usuario" da tabela perfis.
-                // A Edge Function resolve esse usuário para o e-mail interno do Auth.
-                const data = await chamarQuickTask({
-                    action: 'login',
-                    username: nomeUser,
-                    password: pass
-                });
-
-                if (!data?.success || !data?.session?.access_token || !data?.session?.refresh_token) {
-                    throw new Error(data?.error || 'Erro na operação de autenticação.');
+                if (!supabaseClient) {
+                    throw new Error('Supabase não configurado.');
                 }
 
-                // Registra a sessão no cliente Supabase para que RLS funcione nas próximas consultas.
-                const { error: sessionError } = await supabaseClient.auth.setSession({
-                    access_token: data.session.access_token,
-                    refresh_token: data.session.refresh_token
-                });
+                // Login EXCLUSIVO do fluxo Operador.
+                // Não chama fazerLoginAdmin() em nenhuma circunstância.
+                const { data: authData, error: authError } =
+                    await supabaseClient.auth.signInWithPassword({
+                        email: `${nomeUser}@dropmod.local`,
+                        password: pass
+                    });
 
-                if (sessionError) throw new Error(sessionError.message || 'Não foi possível iniciar a sessão.');
+                if (authError) throw authError;
 
-                const perfil = data.profile;
-                if (!perfil?.empresa_id) throw new Error('O perfil deste usuário não possui empresa vinculada.');
+                const userId = authData?.user?.id;
+                if (!userId) throw new Error('Não foi possível identificar o usuário autenticado.');
+
+                const { data: perfil, error: perfilError } = await supabaseClient
+                    .from('perfis')
+                    .select('id, empresa_id, nome, usuario, tipo, ativo')
+                    .eq('id', userId)
+                    .maybeSingle();
+
+                if (perfilError) throw perfilError;
+                if (!perfil) throw new Error('Perfil do operador não encontrado.');
+                if (perfil.ativo === false) throw new Error('Este operador está desativado.');
 
                 const tipo = String(perfil.tipo || '').trim().toUpperCase();
-                if (tipo === 'ADM' || tipo === 'ADMIN' || tipo === 'ADMINISTRADOR' || perfil.role === 'admin') {
+
+                // Operador só entra como OPERADOR.
+                if (tipo !== 'OPERADOR') {
                     await supabaseClient.auth.signOut();
-                    throw new Error('Este usuário possui acesso de administrador. Entre pela aba Administrador.');
+
+                    if (tipo === 'ADM' || tipo === 'ADMIN' || tipo === 'ADMINISTRADOR') {
+                        throw new Error('Este usuário possui acesso de administrador. Entre pela aba Administrador.');
+                    }
+
+                    throw new Error('Este usuário não possui acesso de operador.');
+                }
+
+                if (!perfil.empresa_id) {
+                    await supabaseClient.auth.signOut();
+                    throw new Error('O perfil deste operador não possui empresa vinculada.');
                 }
 
                 currentUserRole = 'operador';
                 usuarioAtivoSessao = {
-                    nome: perfil.nome || perfil.name || perfil.usuario || perfil.username || nomeUser,
+                    nome: perfil.nome || perfil.usuario || nomeUser,
                     tipo: 'operador'
                 };
+
                 window.dropmodOrganizationId = perfil.empresa_id;
+
                 await concluirLogin(`Operador: ${usuarioAtivoSessao.nome}`);
             } catch (err) {
                 console.error('Erro no login do operador:', err);
@@ -1736,9 +1750,15 @@
                 if (error || !perfil || perfil.ativo === false) return;
 
                 const tipo = String(perfil.tipo || '').trim().toUpperCase();
-                currentUserRole = (tipo === 'ADM' || tipo === 'ADMIN' || tipo === 'ADMINISTRADOR')
-                    ? 'admin'
-                    : 'operador';
+
+                if (tipo === 'ADM' || tipo === 'ADMIN' || tipo === 'ADMINISTRADOR') {
+                    currentUserRole = 'admin';
+                } else if (tipo === 'OPERADOR') {
+                    currentUserRole = 'operador';
+                } else {
+                    console.warn('Tipo de perfil sem permissão:', tipo);
+                    return;
+                }
 
                 usuarioAtivoSessao = {
                     nome: perfil.nome || perfil.usuario || 'Usuário',

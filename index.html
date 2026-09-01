@@ -764,22 +764,6 @@
                 renderizar();
             }
         }
-            try {
-                const { error } = await supabaseClient
-                    .from('dropmod_state_empresas')
-                    .select('empresa_id')
-                    .limit(1);
-
-                if (error) {
-                    alert('Erro na conexão: ' + error.message);
-                } else {
-                    alert('✅ Conexão com o Supabase estabelecida com sucesso!');
-                    if (obterEmpresaAtual()) await carregarBancoDoSupabase();
-                }
-            } catch (err) {
-                alert('Falha ao conectar: ' + err.message);
-            }
-        }
 
         // --- CONTROLE DA TELA DE LOGIN ---
         function mudarTipoLogin(tipo) {

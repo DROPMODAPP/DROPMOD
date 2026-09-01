@@ -43,7 +43,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Senha</label>
-                    <input type="password" id="op-pass" placeholder="••••••••" class="w-full p-3 border border-slate-300 rounded-xl text-sm outline-none focus:border-emerald-500">
+                    <div class="relative"><input type="password" id="op-pass" placeholder="••••••••" autocomplete="current-password" class="w-full p-3 pr-12 border border-slate-300 rounded-xl text-sm outline-none focus:border-emerald-500"><button type="button" onclick="alternarVisibilidadeSenha('op-pass', this)" aria-label="Mostrar senha" class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 text-slate-500 hover:text-slate-800">👁</button></div>
                 </div>
                 <button onclick="fazerLoginOperador()" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold hover:bg-emerald-700 transition text-sm shadow-md">
                     Entrar como Operador
@@ -56,7 +56,7 @@
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Usuário do Administrador</label>
                     <input type="text" id="adm-user" value="admin" placeholder="admin" autocomplete="username" class="w-full p-3 border border-slate-300 rounded-xl text-sm outline-none focus:border-emerald-500">
                     <p id="admin-label-status" class="text-xs font-bold text-slate-700 uppercase mb-1 mt-3">Senha de Administração</p>
-                    <input type="password" id="adm-pass" placeholder="••••••••" autocomplete="current-password" class="w-full p-3 border border-slate-300 rounded-xl text-sm outline-none focus:border-emerald-500">
+                    <div class="relative"><input type="password" id="adm-pass" placeholder="••••••••" autocomplete="current-password" class="w-full p-3 pr-12 border border-slate-300 rounded-xl text-sm outline-none focus:border-emerald-500"><button type="button" onclick="alternarVisibilidadeSenha('adm-pass', this)" aria-label="Mostrar senha" class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 text-slate-500 hover:text-slate-800">👁</button></div>
                 </div>
                 <button onclick="fazerLoginAdmin()" id="btn-admin-submit" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition text-sm shadow-md">
                     Acessar Administração
@@ -388,7 +388,7 @@
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Senha de Acesso</label>
-                            <input type="password" id="novo-op-pass" placeholder="••••••••" required class="w-full border border-slate-300 rounded-lg p-2.5 text-xs outline-none">
+                            <div class="relative"><input type="password" id="novo-op-pass" placeholder="••••••••" required autocomplete="new-password" class="w-full border border-slate-300 rounded-lg p-2.5 pr-10 text-xs outline-none"><button type="button" onclick="alternarVisibilidadeSenha('novo-op-pass', this)" aria-label="Mostrar senha do operador" class="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 text-slate-500 hover:text-slate-800">👁</button></div>
                         </div>
                         <div class="flex items-end">
                             <button type="submit" class="w-full bg-emerald-600 text-white py-2.5 rounded-lg text-xs font-bold hover:bg-emerald-700 transition shadow">Cadastrar Operador</button>
@@ -764,33 +764,6 @@
                 renderizar();
             }
         }
-
-        function salvarConfigSupabase(e) {
-            e.preventDefault();
-
-            supabaseConfig = { url, key };
-            localStorage.setItem('dropmod_supabase_config', JSON.stringify(supabaseConfig));
-
-            if (url && key) {
-                try {
-                    supabaseClient = window.supabase.createClient(url, key);
-                    alert('Configuração do Supabase salva com sucesso! Testando conexão...');
-                    testarConexaoSupabase();
-                } catch (err) {
-                    alert('Erro ao instanciar o Supabase. Verifique a URL e a Key.');
-                }
-            } else {
-                supabaseClient = null;
-                alert('Configuração removida. Usando armazenamento local.');
-            }
-            renderizar();
-        }
-
-        async function testarConexaoSupabase() {
-            if (!supabaseClient) {
-                alert('Supabase não configurado.');
-                return;
-            }
             try {
                 const { error } = await supabaseClient
                     .from('dropmod_state_empresas')
@@ -1026,6 +999,36 @@
         }
 
         // --- GESTÃO DE OPERADORES COM NOME ---
+        function alternarVisibilidadeSenha(id, botao) {
+            const input = document.getElementById(id);
+            if (!input) return;
+            const mostrando = input.type === 'text';
+            input.type = mostrando ? 'password' : 'text';
+            if (botao) {
+                botao.textContent = mostrando ? '👁' : '🙈';
+                botao.setAttribute('aria-label', mostrando ? 'Mostrar senha' : 'Ocultar senha');
+            }
+        }
+
+        async function alterarSenhaOperador(nome) {
+            if (currentUserRole !== 'admin') { alert('Apenas o ADM pode alterar senhas de operadores.'); return; }
+            const novaSenha = prompt(`Nova senha para o operador "${nome}":`);
+            if (novaSenha === null) return;
+            if (novaSenha.length < 6) { alert('A senha deve ter pelo menos 6 caracteres.'); return; }
+            const confirmar = prompt('Digite novamente a nova senha para confirmar:');
+            if (confirmar !== novaSenha) { alert('As senhas não conferem.'); return; }
+            try {
+                const { data: sessionData } = await supabaseClient.auth.getSession();
+                const token = sessionData?.session?.access_token;
+                if (!token) throw new Error('Sessão administrativa não encontrada. Faça login novamente.');
+                await chamarQuickTask({ action: 'reset_operator_password', username: nome, password: novaSenha }, token);
+                alert(`Senha do operador "${nome}" alterada com sucesso.`);
+            } catch (err) {
+                console.error(err);
+                alert(err.message || 'Não foi possível alterar a senha.');
+            }
+        }
+
         async function criarOperador(e) {
             e.preventDefault();
             const nome = document.getElementById('novo-op-nome').value.trim();
@@ -1576,7 +1579,7 @@
                 listaOps.innerHTML = banco.operadores.length ? banco.operadores.map(o => `
                     <div class="flex justify-between items-center p-2 bg-slate-50 rounded border text-xs">
                         <span>👤 <b>${o.nome}</b></span>
-                        <button onclick="excluirOperador('${o.nome}')" class="text-red-600 font-bold hover:underline">Remover</button>
+                        <div class="flex items-center gap-2"><button type="button" onclick="alterarSenhaOperador('${o.nome.replace("'", "\'")}')" class="text-indigo-600 font-bold hover:underline">Alterar senha</button><button type="button" onclick="excluirOperador('${o.nome.replace("'", "\'")}')" class="text-red-600 font-bold hover:underline">Remover</button></div>
                     </div>
                 `).join('') : '<span class="text-xs text-slate-400 italic">Nenhum operador cadastrado.</span>';
             }

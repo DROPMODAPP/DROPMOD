@@ -994,6 +994,35 @@
             }
         }
 
+        async function alterarNomeOperador(nomeAtual) {
+            if (currentUserRole !== 'admin') { alert('Apenas o ADM pode alterar nomes de operadores.'); return; }
+            const novoNome = prompt(`Novo nome para o operador "${nomeAtual}":`, nomeAtual);
+            if (novoNome === null) return;
+            const nome = novoNome.trim();
+            if (!nome) { alert('O nome do operador é obrigatório.'); return; }
+            if (nome === nomeAtual) return;
+
+            try {
+                const { data: sessionData } = await supabaseClient.auth.getSession();
+                const token = sessionData?.session?.access_token;
+                if (!token) throw new Error('Sessão administrativa não encontrada. Faça login novamente.');
+
+                await chamarQuickTask({ action: 'update_operator_name', username: nomeAtual, name: nome }, token);
+
+                const operador = (banco.operadores || []).find(
+                    o => o.nome.toLowerCase() === nomeAtual.toLowerCase()
+                );
+                if (operador) operador.nome = nome;
+
+                salvarBancoLocal();
+                renderizar();
+                alert(`Nome do operador alterado para "${nome}" com sucesso.`);
+            } catch (err) {
+                console.error(err);
+                alert(err.message || 'Não foi possível alterar o nome do operador.');
+            }
+        }
+
         async function alterarSenhaOperador(nome) {
             if (currentUserRole !== 'admin') { alert('Apenas o ADM pode alterar senhas de operadores.'); return; }
             const novaSenha = prompt(`Nova senha para o operador "${nome}":`);
@@ -1019,10 +1048,7 @@
             const pass = document.getElementById('novo-op-pass').value;
             if(!nome || !pass) return;
             if(!supabaseClient) { alert('Configure o Supabase antes de cadastrar operadores.'); return; }
-            // A autorização real é feita pela Edge Function quick-task,
-            // que valida o usuário autenticado diretamente na tabela perfis.
-            // Não bloquear aqui por currentUserRole para evitar falso "não é ADM"
-            // quando a variável da interface estiver fora de sincronia com a sessão.
+            if(currentUserRole !== 'admin') { alert('Apenas o ADM pode cadastrar operadores.'); return; }
             if(pass.length < 6) { alert('A senha deve ter pelo menos 6 caracteres.'); return; }
 
             try {
@@ -1566,7 +1592,7 @@
                 listaOps.innerHTML = banco.operadores.length ? banco.operadores.map(o => `
                     <div class="flex justify-between items-center p-2 bg-slate-50 rounded border text-xs">
                         <span>👤 <b>${o.nome}</b></span>
-                        <div class="flex items-center gap-2"><button type="button" onclick="alterarSenhaOperador('${o.nome.replace("'", "\'")}')" class="text-indigo-600 font-bold hover:underline">Alterar senha</button><button type="button" onclick="excluirOperador('${o.nome.replace("'", "\'")}')" class="text-red-600 font-bold hover:underline">Remover</button></div>
+                        <div class="flex items-center gap-2"><button type="button" onclick="alterarNomeOperador('${o.nome.replace("'", "\'")}')" class="text-amber-600 font-bold hover:underline">Alterar nome</button><button type="button" onclick="alterarSenhaOperador('${o.nome.replace("'", "\'")}')" class="text-indigo-600 font-bold hover:underline">Alterar senha</button><button type="button" onclick="excluirOperador('${o.nome.replace("'", "\'")}')" class="text-red-600 font-bold hover:underline">Remover</button></div>
                     </div>
                 `).join('') : '<span class="text-xs text-slate-400 italic">Nenhum operador cadastrado.</span>';
             }

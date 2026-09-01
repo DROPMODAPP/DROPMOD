@@ -1019,7 +1019,10 @@
             const pass = document.getElementById('novo-op-pass').value;
             if(!nome || !pass) return;
             if(!supabaseClient) { alert('Configure o Supabase antes de cadastrar operadores.'); return; }
-            if(currentUserRole !== 'admin') { alert('Apenas o ADM pode cadastrar operadores.'); return; }
+            // A autorização real é feita pela Edge Function quick-task,
+            // que valida o usuário autenticado diretamente na tabela perfis.
+            // Não bloquear aqui por currentUserRole para evitar falso "não é ADM"
+            // quando a variável da interface estiver fora de sincronia com a sessão.
             if(pass.length < 6) { alert('A senha deve ter pelo menos 6 caracteres.'); return; }
 
             try {

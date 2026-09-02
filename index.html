@@ -1186,6 +1186,7 @@
             const menu = document.getElementById('menu-lateral');
             if (menu && !menu.classList.contains('-translate-x-full')) toggleMenuMobile();
             renderizar();
+            if (abaId === 'caderneta') gerarRegistroClienteAutomatico();
         }
 
         function toggleMenuMobile() {
@@ -1372,6 +1373,7 @@
             document.getElementById('cad-valor').value = '';
             document.getElementById('cad-logo-cliente').value = '';
             renderizar();
+            gerarRegistroClienteAutomatico();
         }
 
         async function lerArquivoComoDataURL(arquivo) {
@@ -1381,6 +1383,40 @@
                 reader.onerror = reject;
                 reader.readAsDataURL(arquivo);
             });
+        }
+
+        // Gera automaticamente um número de registro único para novos clientes.
+        // O número é de 6 dígitos e é exclusivo dentro da empresa atual.
+        function gerarRegistroClienteAutomatico() {
+            const campo = document.getElementById('cad-registro');
+            if (!campo) return;
+
+            // Se já houver um registro preenchido, não substitui.
+            if (campo.value.trim()) return;
+
+            const registrosExistentes = new Set(
+                (banco.clientes || [])
+                    .map(c => String(c.registro || '').trim())
+                    .filter(Boolean)
+            );
+
+            // Também considera registros antigos gravados apenas na Caderneta.
+            (banco.caderneta || []).forEach(item => {
+                const r = String(item.registroCliente || '').trim();
+                if (r) registrosExistentes.add(r);
+            });
+
+            let registro;
+            let tentativas = 0;
+            do {
+                registro = String(Math.floor(100000 + Math.random() * 900000));
+                tentativas++;
+            } while (registrosExistentes.has(registro) && tentativas < 100);
+
+            if (!registrosExistentes.has(registro)) {
+                campo.value = registro;
+                preencherClientePorRegistro();
+            }
         }
 
         function preencherClientePorRegistro() {
@@ -1629,6 +1665,7 @@
                     { action: 'list_operators' },
                     accessToken
                 );
+                if (resposta?.error) throw new Error(resposta.error);
 
                 const operadoresRemotos = Array.isArray(resposta?.operadores)
                     ? resposta.operadores
@@ -1686,6 +1723,9 @@
             // automaticamente no painel do ADM da mesma empresa.
             if (currentUserRole === 'admin' && supabaseClient && window.dropmodOrganizationId) {
                 carregarOperadoresDoSupabase();
+            }
+            if (currentUserRole === 'admin' && supabaseClient && window.dropmodOrganizationId) {
+                setTimeout(() => carregarOperadoresDoSupabase(), 1200);
             }
 
             const tabelaHist = document.getElementById('tabela-historico-adm');

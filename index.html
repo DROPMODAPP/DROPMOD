@@ -1621,19 +1621,20 @@
             if (!listaOps || currentUserRole !== 'admin' || !supabaseClient || !window.dropmodOrganizationId) return;
 
             try {
-                const { data, error } = await supabaseClient
-                    .from('perfis')
-                    .select('id, nome, usuario, ativo, tipo')
-                    .eq('empresa_id', window.dropmodOrganizationId)
-                    .eq('tipo', 'OPERADOR')
-                    .eq('ativo', true)
-                    .order('nome', { ascending: true });
+                const { data: sessionData } = await supabaseClient.auth.getSession();
+                const accessToken = sessionData?.session?.access_token;
+                if (!accessToken) return;
 
-                if (error) throw error;
+                const resposta = await chamarQuickTask(
+                    { action: 'list_operators' },
+                    accessToken
+                );
 
-                const operadoresRemotos = Array.isArray(data) ? data : [];
+                const operadoresRemotos = Array.isArray(resposta?.operadores)
+                    ? resposta.operadores
+                    : [];
 
-                // Mantém o banco local atualizado com os operadores reais da empresa.
+                // O Supabase/Quick Task é a fonte oficial da lista de operadores.
                 banco.operadores = operadoresRemotos.map(o => ({
                     id: o.id,
                     nome: o.nome || o.usuario || 'Operador',

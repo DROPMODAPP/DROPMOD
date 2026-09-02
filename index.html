@@ -397,7 +397,9 @@
 
                     <div class="pt-3 border-t">
                         <h4 class="text-xs font-bold text-slate-700 mb-2 uppercase">Operadores Ativos</h4>
-                        <div id="lista-operadores-ativos" class="space-y-2 max-h-36 overflow-y-auto"></div>
+                        <div id="lista-operadores-ativos" class="space-y-2 max-h-36 overflow-y-auto">
+<div id="diagnostico-operadores" class="mt-2 p-2 rounded bg-amber-50 border border-amber-200 text-xs text-slate-700">Diagnóstico ainda não executado.</div>
+<button type="button" onclick="diagnosticarOperadores()" class="mt-2 text-xs font-bold text-amber-700 underline">🔎 Diagnosticar operadores</button></div>
                     </div>
                 </div>
 
@@ -1650,6 +1652,26 @@
             salvarBanco();
             fecharModalEdicao();
             renderizar();
+        }
+
+        async function diagnosticarOperadores() {
+            const listaOps = document.getElementById('lista-operadores-ativos');
+            try {
+                const { data: sessionData } = await supabaseClient.auth.getSession();
+                const accessToken = sessionData?.session?.access_token;
+                if (!accessToken) throw new Error('Sessão do ADM não encontrada.');
+                const r = await chamarQuickTask({ action: 'diagnose_operators' }, accessToken);
+                if (r?.error) throw new Error(r.error);
+                const adm = r.administrador || {};
+                const ops = Array.isArray(r.operadores_da_mesma_empresa) ? r.operadores_da_mesma_empresa : [];
+                const stones = Array.isArray(r.stone_encontrado) ? r.stone_encontrado : [];
+                const stoneTxt = stones.length ? stones.map(x => `${x.nome || '-'} / usuário: ${x.usuario || '-'} / mesma empresa: ${x.mesma_empresa ? 'SIM' : 'NÃO'} / tipo: ${x.tipo || '-'} / ativo: ${x.ativo}`).join('<br>') : 'Stone não localizado em perfis.';
+                const box = document.getElementById('diagnostico-operadores');
+                if (box) box.innerHTML = `<b>Diagnóstico:</b><br>ADM: ${adm.nome || '-'}<br>empresa_id ADM: <code>${adm.empresa_id || '-'}</code><br>Operadores na mesma empresa: <b>${ops.length}</b><br>Stone: ${stoneTxt}`;
+            } catch (err) {
+                const box = document.getElementById('diagnostico-operadores');
+                if (box) box.innerHTML = `<b>Erro:</b> ${String(err?.message || err)}`;
+            }
         }
 
         async function carregarOperadoresDoSupabase() {

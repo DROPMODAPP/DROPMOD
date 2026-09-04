@@ -156,7 +156,7 @@
         <div id="overlay-mobile" onclick="toggleMenuMobile()" class="fixed inset-0 bg-black/60 hidden md:hidden z-40"></div>
 
         <!-- PAINEL PRINCIPAL -->
-        <main class="flex-1 min-h-0 overflow-y-auto p-4 pb-24 md:p-10 md:pb-10 relative">
+        <main class="flex-1 overflow-y-auto p-4 md:p-10 relative">
             
             <!-- ABA 1: INÍCIO -->
             <div id="secao-inicio" class="space-y-6">
@@ -312,122 +312,72 @@
 
             <!-- ABA CADERNETA -->
             <div id="secao-caderneta" class="space-y-6 hidden">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div>
-                        <h1 class="text-xl md:text-2xl font-bold text-slate-800">Caderneta de Clientes</h1>
-                        <p class="text-xs text-slate-500 mt-1">Controle de fiados e valores a receber.</p>
-                    </div>
-                </div>
-
-                <!-- TOTAL A RECEBER -->
-                <div class="bg-gradient-to-r from-amber-500 to-orange-500 text-white p-5 md:p-6 rounded-2xl shadow-sm">
-                    <p class="text-xs font-bold uppercase tracking-wide text-white/80">Total a receber da Caderneta</p>
-                    <div class="flex items-end justify-between gap-3 mt-1">
-                        <h2 id="card-total-caderneta" class="text-3xl md:text-4xl font-black">R$ 0,00</h2>
-                        <span class="text-xs font-bold bg-white/15 px-3 py-1.5 rounded-full">Valores em aberto</span>
-                    </div>
-                </div>
-
-                <!-- NOVO CLIENTE / NOVO FIADO -->
-                <button type="button" onclick="abrirModalNovoCliente()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white p-4 md:p-5 rounded-xl shadow-sm text-left transition">
-                    <div class="flex items-center gap-3">
-                        <div class="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center text-2xl">＋</div>
-                        <div class="min-w-0">
-                            <div class="font-black text-base md:text-lg">Novo Cliente</div>
-                            <div class="text-xs md:text-sm text-emerald-50 mt-0.5">Registrar um novo fiado na Caderneta, com todos os dados do cliente e da compra.</div>
-                        </div>
-                    </div>
-                </button>
-
-                <!-- PESQUISA -->
-                <div class="bg-white p-4 md:p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <label for="busca-caderneta" class="block text-xs font-bold text-slate-500 uppercase mb-2">Pesquisar cliente</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">⌕</span>
-                        <input id="busca-caderneta" type="search" oninput="renderizar()" class="w-full border border-slate-300 rounded-lg pl-9 pr-3 py-3 text-sm outline-none focus:border-emerald-500" placeholder="Pesquisar por nome ou nº de registro">
-                    </div>
-                </div>
-
-                <!-- LISTA DE CLIENTES -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                    <div class="px-5 py-4 border-b border-slate-200">
-                        <h3 class="font-bold text-slate-800">Clientes</h3>
-                    </div>
-                    <div id="lista-clientes-caderneta" class="divide-y divide-slate-100"></div>
-                </div>
-            </div>
-
-            <!-- MODAL NOVO CLIENTE / NOVO FIADO -->
-            <div id="modal-novo-cliente" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[70] p-3 md:p-6">
-                <div class="bg-white w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-2xl shadow-2xl">
-                    <div class="sticky top-0 z-10 bg-white border-b border-slate-200 px-5 py-4 flex items-center justify-between">
-                        <div>
-                            <h2 class="text-lg md:text-xl font-black text-slate-800">Novo Cliente</h2>
-                            <p class="text-xs text-slate-500 mt-0.5">Novo registro de fiado na Caderneta</p>
-                        </div>
-                        <button type="button" onclick="fecharModalNovoCliente()" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-lg">✕</button>
-                    </div>
-
-                    <div class="p-5 md:p-6">
+                <h1 class="text-xl md:text-2xl font-bold text-slate-800">Caderneta de Clientes (Fiados)</h1>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-5 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                        <h3 class="font-bold text-slate-800 border-b pb-2">Adicionar Item / Dívida ao Cliente</h3>
                         <form onsubmit="adicionarCaderneta(event)" class="space-y-4">
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                                <div class="text-xs font-black uppercase text-slate-500 mb-3">Dados do cliente</div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div>
-                                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nº de Registro do Cliente</label>
-                                        <input type="text" id="cad-registro" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="Ex: 000123" inputmode="numeric" onblur="preencherClientePorRegistro()">
-                                        <p class="text-[10px] text-slate-400 mt-1">Registro único do cliente.</p>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nome do Cliente / Loja</label>
-                                        <input type="text" id="cad-cliente" list="lista-sugestao-clientes" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="Digite o nome">
-                                        <datalist id="lista-sugestao-clientes"></datalist>
-                                    </div>
-                                </div>
-                                <div class="mt-3">
-                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Logo do Cliente (opcional)</label>
-                                    <input type="file" id="cad-logo-cliente" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-700">
-                                </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nº de Registro do Cliente</label>
+                                <input type="text" id="cad-registro" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="Ex: 000123" inputmode="numeric" onblur="preencherClientePorRegistro()">
+                                <p class="text-[10px] text-slate-400 mt-1">O número leva diretamente ao cliente e evita erros de nome.</p>
                             </div>
-
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
-                                <div class="text-xs font-black uppercase text-slate-500">Dados do fiado</div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nome do Cliente / Loja</label>
+                                <input type="text" id="cad-cliente" list="lista-sugestao-clientes" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="Digite o nome">
+                                <datalist id="lista-sugestao-clientes"></datalist>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Logo do Cliente (opcional)</label>
+                                <input type="file" id="cad-logo-cliente" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-700">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Produto / SKU</label>
+                                <select id="cad-sku" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500 bg-white"></select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Produto / SKU</label>
-                                    <select id="cad-sku" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500 bg-white"></select>
-                                </div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Quantidade</label>
-                                        <input type="number" id="cad-qtd" min="1" value="1" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none">
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Valor Devido (R$)</label>
-                                        <input type="number" step="0.01" id="cad-valor" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="0.00">
-                                    </div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Quantidade</label>
+                                    <input type="number" id="cad-qtd" min="1" value="1" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Descrição do Produto / Peça</label>
-                                    <input type="text" id="cad-descricao" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="Ex: Perfume 100ml, Camisa...">
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Valor Devido (R$)</label>
+                                    <input type="number" step="0.01" id="cad-valor" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="0.00">
                                 </div>
                             </div>
-
-                            <div class="flex gap-2 pt-1">
-                                <button type="button" onclick="fecharModalNovoCliente()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3 rounded-lg hover:bg-slate-200 transition text-sm">Cancelar</button>
-                                <button type="submit" class="flex-1 bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 transition text-sm">Adicionar à Caderneta</button>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Descrição do Produto / Peça</label>
+                                <input type="text" id="cad-descricao" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="Ex: Perfume 100ml, Camisa...">
                             </div>
+                            <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 transition text-sm">Adicionar à Conta do Cliente</button>
                         </form>
                     </div>
+
+                    <div class="bg-white p-5 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                        <h3 class="font-bold text-slate-800 border-b pb-2">Resumo Financeiro da Caderneta</h3>
+                        <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl">
+                            <p class="text-xs font-bold text-amber-700 uppercase">Total Geral Pendente em Aberto</p>
+                            <h2 id="card-total-caderneta" class="text-2xl font-black text-amber-800 mt-1">R$ 0,00</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden p-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                        <h3 class="font-bold text-slate-800">Clientes Cadastrados</h3>
+                        <input id="busca-caderneta" type="search" oninput="renderizar()" class="w-full sm:w-72 border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:border-emerald-500" placeholder="Buscar por nome ou nº de registro">
+                    </div>
+                    <div id="lista-clientes-caderneta" class="space-y-4"></div>
                 </div>
             </div>
 
             <!-- ABA GERENCIAR & AJUSTAR -->
             <div id="secao-gerenciar" class="space-y-6 hidden">
-                <h1 id="titulo-gerenciar" class="text-xl md:text-2xl font-bold text-slate-800">Gerenciar, Ajustar, Operadores e Supabase</h1>
+                <h1 class="text-xl md:text-2xl font-bold text-slate-800">Gerenciar, Ajustar, Operadores e Supabase</h1>
 
 
                 <!-- PAINEL DE CRIAÇÃO DE OPERADORES COM NOME (EXCLUSIVO ADM) -->
-                <div id="painel-gestao-operadores" class="bg-white p-5 md:p-6 rounded-xl border-l-4 border-emerald-600 shadow-sm space-y-4">
+                <div class="bg-white p-5 md:p-6 rounded-xl border-l-4 border-emerald-600 shadow-sm space-y-4">
                     <h3 class="font-bold text-slate-800">🔑 Gestão de Operadores (Com Nome e Senha)</h3>
                     <p class="text-xs text-slate-500">Cadastre o nome do operador e uma senha para que cada um acesse de forma identificada.</p>
                     
@@ -1021,19 +971,12 @@
             const nomeEl = document.getElementById('userProfileName');
             const roleEl = document.getElementById('userProfileRole');
 
-            const painelGestaoOperadores = document.getElementById('painel-gestao-operadores');
-            const tituloGerenciar = document.getElementById('titulo-gerenciar');
-
             if (currentUserRole === 'admin') {
                 nomeEl.innerText = `Perfil: ${nomePerfil}`;
                 roleEl.innerText = 'Administrador (Total)';
-                if (painelGestaoOperadores) painelGestaoOperadores.classList.remove('hidden');
-                if (tituloGerenciar) tituloGerenciar.innerText = 'Gerenciar, Ajustar, Operadores e Supabase';
             } else {
                 nomeEl.innerText = `Perfil: ${nomePerfil}`;
                 roleEl.innerText = 'Operador';
-                if (painelGestaoOperadores) painelGestaoOperadores.classList.add('hidden');
-                if (tituloGerenciar) tituloGerenciar.innerText = 'Gerenciar & Ajustar';
             }
             renderizar();
             if (supabaseClient && obterEmpresaAtual()) {
@@ -1236,7 +1179,6 @@
             const menu = document.getElementById('menu-lateral');
             if (menu && !menu.classList.contains('-translate-x-full')) toggleMenuMobile();
             renderizar();
-            if (abaId === 'caderneta') gerarRegistroClienteAutomatico();
         }
 
         function toggleMenuMobile() {
@@ -1256,12 +1198,7 @@
             const nome = document.getElementById('input-prod-nome').value.trim();
             const categoria = document.getElementById('input-prod-cat').value;
             if(!nome || !categoria) return;
-            banco.produtosBase.push({
-                id: 'PB-' + Date.now(),
-                nome,
-                categoria,
-                criadoPor: usuarioAtivoSessao?.nome || 'Administrador'
-            });
+            banco.produtosBase.push({ id: 'PB-' + Date.now(), nome, categoria });
             salvarBanco();
             document.getElementById('input-prod-nome').value = '';
             renderizar();
@@ -1300,16 +1237,7 @@
 
             if(!produtoBaseId || !sku || !atributo) return;
 
-            banco.variacoes.push({
-                id: 'VAR-' + Date.now(),
-                produtoBaseId,
-                sku,
-                atributo,
-                custo,
-                venda,
-                quantidade,
-                criadoPor: usuarioAtivoSessao?.nome || 'Administrador'
-            });
+            banco.variacoes.push({ id: 'VAR-' + Date.now(), produtoBaseId, sku, atributo, custo, venda, quantidade });
             salvarBanco();
             gerarNovoSku();
             document.getElementById('input-custo').value = '';
@@ -1343,23 +1271,6 @@
             }
             salvarBanco();
             renderizar();
-        }
-
-        function abrirModalNovoCliente() {
-            const modal = document.getElementById('modal-novo-cliente');
-            if (!modal) return;
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            gerarRegistroClienteAutomatico();
-            const sku = document.getElementById('cad-sku');
-            if (sku) sku.focus();
-        }
-
-        function fecharModalNovoCliente() {
-            const modal = document.getElementById('modal-novo-cliente');
-            if (!modal) return;
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
         }
 
         async function adicionarCaderneta(e) {
@@ -1439,9 +1350,7 @@
             document.getElementById('cad-qtd').value = '1';
             document.getElementById('cad-valor').value = '';
             document.getElementById('cad-logo-cliente').value = '';
-            fecharModalNovoCliente();
             renderizar();
-            gerarRegistroClienteAutomatico();
         }
 
         async function lerArquivoComoDataURL(arquivo) {
@@ -1451,40 +1360,6 @@
                 reader.onerror = reject;
                 reader.readAsDataURL(arquivo);
             });
-        }
-
-        // Gera automaticamente um número de registro único para novos clientes.
-        // O número é de 6 dígitos e é exclusivo dentro da empresa atual.
-        function gerarRegistroClienteAutomatico() {
-            const campo = document.getElementById('cad-registro');
-            if (!campo) return;
-
-            // Se já houver um registro preenchido, não substitui.
-            if (campo.value.trim()) return;
-
-            const registrosExistentes = new Set(
-                (banco.clientes || [])
-                    .map(c => String(c.registro || '').trim())
-                    .filter(Boolean)
-            );
-
-            // Também considera registros antigos gravados apenas na Caderneta.
-            (banco.caderneta || []).forEach(item => {
-                const r = String(item.registroCliente || '').trim();
-                if (r) registrosExistentes.add(r);
-            });
-
-            let registro;
-            let tentativas = 0;
-            do {
-                registro = String(Math.floor(100000 + Math.random() * 900000));
-                tentativas++;
-            } while (registrosExistentes.has(registro) && tentativas < 100);
-
-            if (!registrosExistentes.has(registro)) {
-                campo.value = registro;
-                preencherClientePorRegistro();
-            }
         }
 
         function preencherClientePorRegistro() {
@@ -1505,16 +1380,6 @@
             const recibo = document.getElementById('img-cliente-logo');
             const fallback = banco.logoLoja || 'https://i.ibb.co/M580Zw7n/1787759966265.png';
             [desktop, mobile, recibo].forEach(el => { if(el) el.src = logo || fallback; });
-        }
-
-        function abrirDetalhesClienteCaderneta(clienteName) {
-            const itensCliente = banco.caderneta.filter(c => String(c.cliente || '').toLowerCase() === String(clienteName || '').toLowerCase());
-            const pendente = itensCliente.reduce((acc, i) => acc + (!i.pago ? Number(i.valor || 0) : 0), 0);
-            const cadastro = banco.clientes.find(c => String(c.nome || '').toLowerCase() === String(clienteName || '').toLowerCase()) || {};
-            const registro = cadastro.registro || itensCliente.find(i => i.registroCliente)?.registroCliente || '—';
-            const logo = cadastro.logo || itensCliente.find(i => i.logoCliente)?.logoCliente || banco.logoLoja;
-            const resumo = itensCliente.map(i => `${i.quantidade ? i.quantidade + 'x ' : ''}${i.descricao} — R$ ${Number(i.valor || 0).toFixed(2)}${i.pago ? ' [Pago]' : ''}`).join('\n');
-            alert(`${clienteName}\nRegistro: #${registro}\n\nTotal a receber: R$ ${pendente.toFixed(2)}\n\n${resumo || 'Nenhum lançamento.'}`);
         }
 
         function abaterValorParcial(clienteName) {
@@ -1694,18 +1559,9 @@
             document.getElementById('edit-tipo').value = 'variacao';
             document.getElementById('edit-id').value = v.id;
             document.getElementById('campos-edicao-dinamico').innerHTML = `
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Custo</label>
-                    <input type="number" step="0.01" id="edit-custo" value="${v.custo}" class="w-full border p-3 rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Venda</label>
-                    <input type="number" step="0.01" id="edit-venda" value="${v.venda}" class="w-full border p-3 rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Quantidade atual</label>
-                    <input type="number" id="edit-qtd" value="${v.quantidade}" class="w-full border p-3 rounded-lg text-sm">
-                </div>`;
+                <input type="number" step="0.01" id="edit-custo" value="${v.custo}" class="w-full border p-3 rounded-lg text-sm">
+                <input type="number" step="0.01" id="edit-venda" value="${v.venda}" class="w-full border p-3 rounded-lg text-sm">
+                <input type="number" id="edit-qtd" value="${v.quantidade}" class="w-full border p-3 rounded-lg text-sm">`;
             document.getElementById('modal-edicao').classList.remove('hidden');
         }
 
@@ -1730,54 +1586,6 @@
             renderizar();
         }
 
-        async function carregarOperadoresDoSupabase() {
-            const listaOps = document.getElementById('lista-operadores-ativos');
-            if (!listaOps || currentUserRole !== 'admin' || !supabaseClient || !window.dropmodOrganizationId) return;
-
-            try {
-                const { data: sessionData } = await supabaseClient.auth.getSession();
-                const accessToken = sessionData?.session?.access_token;
-                if (!accessToken) return;
-
-                const resposta = await chamarQuickTask(
-                    { action: 'list_operators' },
-                    accessToken
-                );
-                if (resposta?.error) throw new Error(resposta.error);
-
-                const operadoresRemotos = Array.isArray(resposta?.operadores)
-                    ? resposta.operadores
-                    : [];
-
-                // O Supabase/Quick Task é a fonte oficial da lista de operadores.
-                banco.operadores = operadoresRemotos.map(o => ({
-                    id: o.id,
-                    nome: o.nome || o.usuario || 'Operador',
-                    usuario: o.usuario || '',
-                    auth: true
-                }));
-                salvarBancoLocal();
-
-                listaOps.innerHTML = operadoresRemotos.length
-                    ? operadoresRemotos.map(o => {
-                        const nome = o.nome || o.usuario || 'Operador';
-                        const seguro = nome.replace(/'/g, "\\'");
-                        return `
-                        <div class="flex justify-between items-center p-2 bg-slate-50 rounded border text-xs">
-                            <span>👤 <b>${nome}</b></span>
-                            <div class="flex items-center gap-2">
-                                <button type="button" onclick="alterarNomeOperador('${seguro}')" class="text-amber-600 font-bold hover:underline">Alterar nome</button>
-                                <button type="button" onclick="alterarSenhaOperador('${seguro}')" class="text-indigo-600 font-bold hover:underline">Alterar senha</button>
-                                <button type="button" onclick="excluirOperador('${seguro}')" class="text-red-600 font-bold hover:underline">Remover</button>
-                            </div>
-                        </div>`;
-                    }).join('')
-                    : '<span class="text-xs text-slate-400 italic">Nenhum operador cadastrado.</span>';
-            } catch (err) {
-                console.warn('Não foi possível sincronizar operadores do Supabase:', err);
-            }
-        }
-
         function renderizar() {
             if(document.getElementById('input-nome-loja')) document.getElementById('input-nome-loja').value = banco.nomeLoja;
             if(document.getElementById('preview-logo-negocio')) document.getElementById('preview-logo-negocio').src = banco.logoLoja;
@@ -1794,16 +1602,6 @@
                         <div class="flex items-center gap-2"><button type="button" onclick="alterarNomeOperador('${o.nome.replace("'", "\'")}')" class="text-amber-600 font-bold hover:underline">Alterar nome</button><button type="button" onclick="alterarSenhaOperador('${o.nome.replace("'", "\'")}')" class="text-indigo-600 font-bold hover:underline">Alterar senha</button><button type="button" onclick="excluirOperador('${o.nome.replace("'", "\'")}')" class="text-red-600 font-bold hover:underline">Remover</button></div>
                     </div>
                 `).join('') : '<span class="text-xs text-slate-400 italic">Nenhum operador cadastrado.</span>';
-            }
-
-            // A lista de operadores deve refletir o Supabase, e não apenas o banco local
-            // do aparelho do ADM. Assim, operadores criados em outro dispositivo aparecem
-            // automaticamente no painel do ADM da mesma empresa.
-            if (currentUserRole === 'admin' && supabaseClient && window.dropmodOrganizationId) {
-                carregarOperadoresDoSupabase();
-            }
-            if (currentUserRole === 'admin' && supabaseClient && window.dropmodOrganizationId) {
-                setTimeout(() => carregarOperadoresDoSupabase(), 1200);
             }
 
             const tabelaHist = document.getElementById('tabela-historico-adm');
@@ -1858,28 +1656,17 @@
 
             let totalCad = 0;
             const buscaCad = (document.getElementById('busca-caderneta')?.value || '').trim().toLowerCase();
-            const clientesMap = new Map();
+            const clientesNomes = [...new Set(banco.caderneta.map(c => c.cliente))];
 
-            banco.caderneta.forEach(item => {
-                const nome = item.cliente || 'Cliente sem nome';
-                const chave = nome.toLowerCase();
-                if (!clientesMap.has(chave)) clientesMap.set(chave, { nome, itens: [] });
-                clientesMap.get(chave).itens.push(item);
-            });
-
-            (banco.clientes || []).forEach(cliente => {
-                const chave = String(cliente.nome || '').toLowerCase();
-                if (chave && !clientesMap.has(chave)) clientesMap.set(chave, { nome: cliente.nome, itens: [] });
-            });
-
-            const clientesFiltrados = [...clientesMap.values()].filter(grupo => {
-                const cadastro = banco.clientes.find(c => String(c.nome || '').toLowerCase() === grupo.nome.toLowerCase()) || {};
-                const registro = cadastro.registro || grupo.itens.find(i => i.registroCliente)?.registroCliente || '';
-                return !buscaCad || grupo.nome.toLowerCase().includes(buscaCad) || String(registro).toLowerCase().includes(buscaCad);
+            const clientesFiltrados = clientesNomes.filter(cli => {
+                const registro = banco.clientes.find(c => c.nome.toLowerCase() === cli.toLowerCase())?.registro
+                    || banco.caderneta.find(c => c.cliente.toLowerCase() === cli.toLowerCase())?.registroCliente
+                    || '';
+                return !buscaCad || cli.toLowerCase().includes(buscaCad) || String(registro).toLowerCase().includes(buscaCad);
             });
 
             if(document.getElementById('lista-sugestao-clientes')) {
-                document.getElementById('lista-sugestao-clientes').innerHTML = [...clientesMap.values()].map(c => `<option value="${c.nome}">`).join('');
+                document.getElementById('lista-sugestao-clientes').innerHTML = clientesNomes.map(c => `<option value="${c}">`).join('');
             }
 
             const selCadSku = document.getElementById('cad-sku');
@@ -1891,49 +1678,53 @@
             }
 
             let htmlCad = '';
-            clientesFiltrados.forEach(grupo => {
-                const itens = grupo.itens;
-                const cadastroCliente = banco.clientes.find(c => String(c.nome || '').toLowerCase() === grupo.nome.toLowerCase()) || {};
+            clientesFiltrados.forEach(cli => {
+                const itens = banco.caderneta.filter(c => c.cliente === cli);
+                const cadastroCliente = banco.clientes.find(c => c.nome.toLowerCase() === cli.toLowerCase()) || {};
                 const registroCliente = cadastroCliente.registro || itens.find(i => i.registroCliente)?.registroCliente || '—';
                 const logoCliente = cadastroCliente.logo || itens.find(i => i.logoCliente)?.logoCliente || banco.logoLoja;
-                const subCli = itens.reduce((acc, i) => acc + (!i.pago ? Number(i.valor || 0) : 0), 0);
-                totalCad += subCli;
+                let subCli = 0;
+                let itensHtml = '';
 
-                htmlCad += `<button type="button" onclick="abrirDetalhesClienteCaderneta('${grupo.nome.replace(/'/g, "\\'")}')" class="w-full p-4 md:p-5 text-left hover:bg-slate-50 transition flex items-center gap-3">
-                    <img src="${logoCliente}" class="w-11 h-11 rounded-xl object-cover border border-slate-200 bg-slate-50 shrink-0" alt="Logo Cliente">
-                    <div class="min-w-0 flex-1">
-                        <div class="font-black text-sm md:text-base text-slate-800 truncate">${grupo.nome}</div>
-                        <div class="text-[11px] text-slate-400 mt-0.5">Registro #${registroCliente}</div>
+                itens.forEach(i => {
+                    if(!i.pago) subCli += i.valor;
+                    totalCad += (!i.pago ? i.valor : 0);
+                    itensHtml += `<div class="flex justify-between items-center p-2 bg-slate-50 rounded text-xs">
+                        <span><b>${i.quantidade ? `${i.quantidade}x ` : ''}${i.descricao}</b> ${i.pago ? '<span class="text-emerald-600">[Pago]</span>' : ''}</span>
+                        <div class="space-x-1"><span class="font-bold">R$ ${i.valor.toFixed(2)}</span>
+                        <button onclick="trocarItemCaderneta('${i.id}')" class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded">Troca</button><button onclick="alternarStatusItem('${i.id}')" class="bg-slate-200 px-1.5 py-0.5 rounded">🔁</button>
+                        ${currentUserRole === 'admin' ? `<button onclick="excluirItemCaderneta('${i.id}')" class="bg-red-500 text-white px-1.5 py-0.5 rounded">✕</button>` : ''}</div>
+                    </div>`;
+                });
+
+                htmlCad += `<div class="border rounded-xl p-4 space-y-2 bg-white">
+                    <div class="flex justify-between items-center border-b pb-2 gap-2">
+                        <div class="flex items-center gap-2">
+                            <img src="${logoCliente}" class="w-9 h-9 rounded-lg object-cover border" alt="Logo Cliente">
+                            <h4 class="font-black text-sm">${cli} <span class="text-slate-400 font-normal">#${registroCliente}</span> (<span class="text-amber-700">R$ ${subCli.toFixed(2)}</span>)</h4>
+                        </div>
+                        <div class="space-x-1">
+                            <button onclick="abaterValorParcial('${cli.replace(/'/g, "\\'")}')" class="bg-blue-600 text-white px-2 py-1 rounded text-xs">Abater</button>
+                            <button onclick="compartilharExtratoWhatsApp('${cli.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-xs">WhatsApp</button>
+                            <button onclick="quitarClienteInteiro('${cli.replace(/'/g, "\\'")}')" class="bg-slate-800 text-white px-2 py-1 rounded text-xs">Quitar</button>
+                        </div>
                     </div>
-                    <div class="text-right shrink-0">
-                        <div class="text-[10px] uppercase font-bold text-slate-400">A receber</div>
-                        <div class="font-black text-amber-700">R$ ${subCli.toFixed(2)}</div>
-                    </div>
-                </button>`;
+                    <div class="space-y-1">${itensHtml}</div>
+                </div>`;
             });
 
             if(document.getElementById('card-total-caderneta')) document.getElementById('card-total-caderneta').innerText = `R$ ${totalCad.toFixed(2)}`;
-            if(document.getElementById('lista-clientes-caderneta')) document.getElementById('lista-clientes-caderneta').innerHTML = htmlCad || `<div class="p-5 text-center text-slate-400 text-xs">Nenhum cliente encontrado.</div>`;
+            if(document.getElementById('lista-clientes-caderneta')) document.getElementById('lista-clientes-caderneta').innerHTML = htmlCad || `<span class="text-slate-400 text-xs">Nenhum registro encontrado.</span>`;
 
             let htmlGer = '';
             banco.produtosBase.forEach(pb => {
                 const vars = banco.variacoes.filter(v => v.produtoBaseId === pb.id);
-                htmlGer += `<tr class="bg-slate-50 font-bold border-t"><td colspan="2" class="p-3">📦 ${pb.nome} (${pb.categoria})<div class="text-[10px] font-normal text-slate-400 mt-1">Cadastrado por: ${pb.criadoPor || 'Administrador'}</div></td><td class="p-3 text-center text-xs">${vars.length} vars</td><td class="p-3 text-right"><button onclick="abrirModalEdicaoProdutoBase('${pb.id}')" class="bg-slate-800 text-white px-2 py-1 rounded text-xs mr-1">Editar</button>${currentUserRole === 'admin' ? `<button onclick="excluirProdutoBase('${pb.id}')" class="bg-red-600 text-white px-2 py-1 rounded text-xs">Excluir</button>` : ''}</td></tr>`;
+                htmlGer += `<tr class="bg-slate-50 font-bold border-t"><td colspan="2" class="p-3">📦 ${pb.nome} (${pb.categoria})</td><td class="p-3 text-center text-xs">${vars.length} vars</td><td class="p-3 text-right"><button onclick="abrirModalEdicaoProdutoBase('${pb.id}')" class="bg-slate-800 text-white px-2 py-1 rounded text-xs mr-1">Editar</button>${currentUserRole === 'admin' ? `<button onclick="excluirProdutoBase('${pb.id}')" class="bg-red-600 text-white px-2 py-1 rounded text-xs">Excluir</button>` : ''}</td></tr>`;
                 vars.forEach(v => {
-                    htmlGer += `<tr class="border-t text-xs"><td class="p-2 pl-6 font-mono">SKU</td><td class="p-2"><b>${v.sku}</b> (${v.atributo}) - Venda: R$ ${v.venda.toFixed(2)}<div class="text-[10px] text-slate-400 mt-1">Cadastrado por: ${v.criadoPor || pb.criadoPor || 'Administrador'}</div></td><td class="p-2 text-center"><b>${v.quantidade} un</b></td><td class="p-2 text-right"><button onclick="abrirModalEdicaoVariacao('${v.id}')" class="bg-emerald-600 text-white px-2 py-0.5 rounded mr-1">Editar</button>${currentUserRole === 'admin' ? `<button onclick="excluirVariacao('${v.id}')" class="bg-red-500 text-white px-2 py-0.5 rounded">Excluir</button>` : ''}</td></tr>`;
+                    htmlGer += `<tr class="border-t text-xs"><td class="p-2 pl-6 font-mono">SKU</td><td class="p-2"><b>${v.sku}</b> (${v.atributo}) - Venda: R$ ${v.venda.toFixed(2)}</td><td class="p-2 text-center"><b>${v.quantidade} un</b></td><td class="p-2 text-right"><button onclick="abrirModalEdicaoVariacao('${v.id}')" class="bg-emerald-600 text-white px-2 py-0.5 rounded mr-1">Editar</button>${currentUserRole === 'admin' ? `<button onclick="excluirVariacao('${v.id}')" class="bg-red-500 text-white px-2 py-0.5 rounded">Excluir</button>` : ''}</td></tr>`;
                 });
             });
             if(document.getElementById('tabela-gerenciar')) document.getElementById('tabela-gerenciar').innerHTML = htmlGer || `<tr><td colspan="4" class="p-4 text-center text-slate-400">Nenhum produto.</td></tr>`;
-            let htmlGerMobile = '';
-            banco.produtosBase.forEach(pb => {
-                const vars = banco.variacoes.filter(v => v.produtoBaseId === pb.id);
-                htmlGerMobile += `<div class="p-4 bg-slate-50 border-b border-slate-200"><div class="flex items-start justify-between gap-3"><div class="min-w-0"><div class="font-black text-sm text-slate-800 break-words">📦 ${pb.nome}</div><div class="text-[11px] text-slate-500 mt-0.5">${pb.categoria || 'Sem categoria'} · ${vars.length} ${vars.length === 1 ? 'variação' : 'variações'}</div><div class="text-[10px] text-slate-400 mt-1">Cadastrado por: ${pb.criadoPor || 'Administrador'}</div></div><div class="shrink-0 flex gap-1"><button onclick="abrirModalEdicaoProdutoBase('${pb.id}')" class="bg-slate-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">Editar</button>${currentUserRole === 'admin' ? `<button onclick="excluirProdutoBase('${pb.id}')" class="bg-red-600 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">Excluir</button>` : ''}</div></div></div>`;
-                vars.forEach(v => {
-                    htmlGerMobile += `<div class="p-4 border-b border-slate-100 bg-white"><div class="flex items-start justify-between gap-3"><div class="min-w-0 flex-1"><div class="font-mono font-black text-xs text-slate-800">${v.sku}</div><div class="text-xs text-slate-600 mt-1">${v.atributo || 'Sem variação'}</div><div class="text-[10px] text-slate-400 mt-1">Cadastrado por: ${v.criadoPor || pb.criadoPor || 'Administrador'}</div><div class="grid grid-cols-2 gap-2 mt-3"><div class="bg-slate-50 rounded-lg p-2"><div class="text-[9px] font-bold uppercase text-slate-400">Venda</div><div class="text-xs font-black text-emerald-600">R$ ${v.venda.toFixed(2)}</div></div><div class="bg-slate-50 rounded-lg p-2"><div class="text-[9px] font-bold uppercase text-slate-400">Estoque</div><div class="text-xs font-black text-slate-800">${v.quantidade} un</div></div></div></div><div class="shrink-0 flex flex-col gap-1"><button onclick="abrirModalEdicaoVariacao('${v.id}')" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">Editar</button>${currentUserRole === 'admin' ? `<button onclick="excluirVariacao('${v.id}')" class="bg-red-500 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">Excluir</button>` : ''}</div></div></div>`;
-                });
-            });
-            const listaGerenciarMobile = document.getElementById('lista-gerenciar-mobile');
-            if (listaGerenciarMobile) listaGerenciarMobile.innerHTML = htmlGerMobile || `<div class="p-5 text-center text-slate-400 text-xs">Nenhum produto.</div>`;
         }
 
         async function restaurarSessaoSupabase() {
@@ -1981,195 +1772,5 @@
         restaurarSessaoSupabase();
         gerarNovoSku();
     </script>
-
-
-
-
-<!-- DROP MOD - POPUP OPERADOR -> ADM (TESTE) -->
-<script>
-(function () {
-    const INTERVALO_MS = 5000;
-    const ULTIMO_EVENTO_KEY = 'dropmod_ultimo_evento_notificacao';
-    let timerNotificacoes = null;
-    let primeiraLeitura = true;
-
-    function escapeHtml(v) {
-        return String(v ?? '').replace(/[&<>"']/g, c => ({
-            '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;'
-        }[c]));
-    }
-
-    function mostrarPopupVenda(evento) {
-        const antigo = document.getElementById('dropmod-popup-venda');
-        if (antigo) antigo.remove();
-
-        const box = document.createElement('div');
-        box.id = 'dropmod-popup-venda';
-        box.style.cssText =
-            'position:fixed;left:14px;right:14px;top:18px;z-index:100000;' +
-            'background:#0f172a;color:#fff;border-radius:16px;padding:16px;' +
-            'box-shadow:0 14px 40px rgba(0,0,0,.35);font-family:Arial,sans-serif;' +
-            'border:1px solid rgba(255,255,255,.12);';
-
-        box.innerHTML =
-            '<div style="display:flex;gap:12px;align-items:flex-start;">' +
-              '<div style="font-size:28px;">🔔</div>' +
-              '<div style="flex:1;">' +
-                '<div style="font-size:15px;font-weight:800;margin-bottom:4px;">Nova venda</div>' +
-                '<div style="font-size:13px;line-height:1.45;color:#e2e8f0;">' +
-                  escapeHtml(evento.detalhes) +
-                '</div>' +
-                '<div style="font-size:11px;color:#94a3b8;margin-top:7px;">' +
-                  'Registrada por ' + escapeHtml(evento.responsavel) + ' • ' + escapeHtml(evento.data) +
-                '</div>' +
-              '</div>' +
-              '<button type="button" style="background:transparent;border:0;color:#94a3b8;font-size:20px;padding:0 2px;">×</button>' +
-            '</div>';
-
-        box.querySelector('button').onclick = () => box.remove();
-        document.body.appendChild(box);
-        setTimeout(() => box.remove(), 8000);
-    }
-
-    function notificarVenda(evento) {
-        mostrarPopupVenda(evento);
-
-        if ('Notification' in window && Notification.permission === 'granted') {
-            try {
-                new Notification('DROP MOD — Nova venda', {
-                    body: `${evento.detalhes}\n${evento.responsavel}`,
-                    icon: 'https://i.ibb.co/M580Zw7n/1787759966265.png',
-                    tag: 'dropmod-venda-' + evento.id
-                });
-            } catch (e) {
-                console.warn('Notificação do navegador indisponível:', e);
-            }
-        }
-    }
-
-    async function ativarNotificacoesDropMod() {
-        if (!('Notification' in window)) {
-            alert('Este navegador não suporta notificações.');
-            return;
-        }
-        if (Notification.permission === 'granted') {
-            localStorage.setItem('dropmod_notificacoes_ativadas', '1');
-            const btn = document.getElementById('btn-notificacoes-dropmod');
-            if (btn) btn.remove();
-            mostrarAvisoNotificacao('Notificações já estão ativadas.');
-            return;
-        }
-        if (Notification.permission === 'denied') {
-            alert('As notificações estão bloqueadas. Ative-as nas configurações do site.');
-            return;
-        }
-        const permissao = await Notification.requestPermission();
-        if (permissao === 'granted') {
-            localStorage.setItem('dropmod_notificacoes_ativadas', '1');
-            const btn = document.getElementById('btn-notificacoes-dropmod');
-            if (btn) btn.remove();
-            new Notification('DROP MOD', {
-                body: 'Notificações ativadas com sucesso.',
-                icon: 'https://i.ibb.co/M580Zw7n/1787759966265.png'
-            });
-        }
-    }
-
-    function mostrarAvisoNotificacao(msg) {
-        const box = document.createElement('div');
-        box.style.cssText =
-            'position:fixed;right:14px;bottom:68px;z-index:99999;' +
-            'background:#0f172a;color:#fff;padding:12px 16px;border-radius:12px;' +
-            'box-shadow:0 10px 30px rgba(0,0,0,.25);font:600 13px Arial;';
-        box.textContent = msg;
-        document.body.appendChild(box);
-        setTimeout(() => box.remove(), 3000);
-    }
-
-    async function verificarNovaVendaADM() {
-        if (typeof currentUserRole === 'undefined' || currentUserRole !== 'admin') return;
-        if (typeof supabaseClient === 'undefined' || !supabaseClient) return;
-
-        const empresaId = String(window.dropmodOrganizationId || '').trim();
-        if (!empresaId) return;
-
-        try {
-            const { data, error } = await supabaseClient
-                .from('dropmod_state_empresas')
-                .select('dados')
-                .eq('empresa_id', empresaId)
-                .maybeSingle();
-
-            if (error || !data?.dados?.historico?.length) return;
-
-            const ultimo = data.dados.historico[0];
-            if (!ultimo?.id) return;
-
-            const chaveAnterior = localStorage.getItem(ULTIMO_EVENTO_KEY);
-
-            // Na primeira leitura, apenas registra o evento atual.
-            // Assim o ADM não recebe notificações antigas ao abrir o sistema.
-            if (primeiraLeitura) {
-                primeiraLeitura = false;
-                localStorage.setItem(ULTIMO_EVENTO_KEY, ultimo.id);
-                return;
-            }
-
-            if (chaveAnterior === ultimo.id) return;
-
-            localStorage.setItem(ULTIMO_EVENTO_KEY, ultimo.id);
-
-            const responsavel = String(ultimo.responsavel || '');
-            const detalhes = String(ultimo.detalhes || '');
-            const ehVendaOperador =
-                /^Op\(/i.test(responsavel) &&
-                /VENDA|Sa[ií]da\s*\/\s*Venda/i.test(detalhes);
-
-            if (ehVendaOperador) {
-                notificarVenda({
-                    id: ultimo.id,
-                    data: ultimo.data || '',
-                    detalhes,
-                    responsavel
-                });
-            }
-        } catch (e) {
-            console.warn('Falha ao verificar novas vendas:', e);
-        }
-    }
-
-    function iniciarMonitoramentoADM() {
-        if (timerNotificacoes) clearInterval(timerNotificacoes);
-        primeiraLeitura = true;
-
-        if (typeof currentUserRole === 'undefined' || currentUserRole !== 'admin') return;
-
-        verificarNovaVendaADM();
-        timerNotificacoes = setInterval(verificarNovaVendaADM, INTERVALO_MS);
-    }
-
-    window.ativarNotificacoesDropMod = ativarNotificacoesDropMod;
-
-    window.addEventListener('load', function () {
-        if (Notification.permission !== 'granted' && !document.getElementById('btn-notificacoes-dropmod')) {
-            const btn = document.createElement('button');
-            btn.id = 'btn-notificacoes-dropmod';
-            btn.type = 'button';
-            btn.innerHTML = '🔔 Ativar notificações';
-            btn.onclick = ativarNotificacoesDropMod;
-            btn.style.cssText =
-                'position:fixed;right:14px;bottom:14px;z-index:9998;' +
-                'background:#111827;color:#fff;border:0;border-radius:10px;' +
-                'padding:10px 14px;font:700 12px Arial;box-shadow:0 6px 18px rgba(0,0,0,.22);';
-            document.body.appendChild(btn);
-        }
-
-        // Aguarda o login ser concluído e então inicia a verificação.
-        setTimeout(iniciarMonitoramentoADM, 1500);
-        setTimeout(iniciarMonitoramentoADM, 5000);
-    });
-})();
-</script>
-
 </body>
 </html>

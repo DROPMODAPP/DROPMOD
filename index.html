@@ -312,65 +312,47 @@
 
             <!-- ABA CADERNETA -->
             <div id="secao-caderneta" class="space-y-6 hidden">
-                <h1 class="text-xl md:text-2xl font-bold text-slate-800">Caderneta de Clientes (Fiados)</h1>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white p-5 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                        <h3 class="font-bold text-slate-800 border-b pb-2">Adicionar Item / Dívida ao Cliente</h3>
-                        <form onsubmit="adicionarCaderneta(event)" class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nº de Registro do Cliente</label>
-                                <input type="text" id="cad-registro" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="Ex: 000123" inputmode="numeric" onblur="preencherClientePorRegistro()">
-                                <p class="text-[10px] text-slate-400 mt-1">O número leva diretamente ao cliente e evita erros de nome.</p>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nome do Cliente / Loja</label>
-                                <input type="text" id="cad-cliente" list="lista-sugestao-clientes" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="Digite o nome">
-                                <datalist id="lista-sugestao-clientes"></datalist>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Logo do Cliente (opcional)</label>
-                                <input type="file" id="cad-logo-cliente" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-700">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Produto / SKU</label>
-                                <select id="cad-sku" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500 bg-white"></select>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Quantidade</label>
-                                    <input type="number" id="cad-qtd" min="1" value="1" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none">
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Valor Devido (R$)</label>
-                                    <input type="number" step="0.01" id="cad-valor" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="0.00">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Descrição do Produto / Peça</label>
-                                <input type="text" id="cad-descricao" required class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-emerald-500" placeholder="Ex: Perfume 100ml, Camisa...">
-                            </div>
-                            <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 transition text-sm">Adicionar à Conta do Cliente</button>
-                        </form>
-                    </div>
-
-                    <div class="bg-white p-5 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                        <h3 class="font-bold text-slate-800 border-b pb-2">Resumo Financeiro da Caderneta</h3>
-                        <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl">
-                            <p class="text-xs font-bold text-amber-700 uppercase">Total Geral Pendente em Aberto</p>
-                            <h2 id="card-total-caderneta" class="text-2xl font-black text-amber-800 mt-1">R$ 0,00</h2>
-                        </div>
-                    </div>
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div><h1 class="text-xl md:text-2xl font-bold text-slate-800">Caderneta de Clientes</h1><p class="text-xs text-slate-500 mt-1">Controle de fiado por cliente, com histórico de cada lançamento.</p></div>
+                    <button onclick="abrirNovoClienteCaderneta()" class="bg-emerald-600 text-white font-bold py-3 px-5 rounded-xl hover:bg-emerald-700 transition text-sm">＋ Novo Cliente</button>
                 </div>
-
+                <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl">
+                    <p class="text-xs font-bold text-amber-700 uppercase">Total Geral Pendente em Aberto</p>
+                    <h2 id="card-total-caderneta" class="text-2xl font-black text-amber-800 mt-1">R$ 0,00</h2>
+                </div>
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden p-5">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                        <h3 class="font-bold text-slate-800">Clientes Cadastrados</h3>
+                        <div><h3 class="font-bold text-slate-800">Clientes Cadastrados</h3><p class="text-xs text-slate-400 mt-1">Clique no cliente para abrir a conta e ver o histórico.</p></div>
                         <input id="busca-caderneta" type="search" oninput="renderizar()" class="w-full sm:w-72 border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:border-emerald-500" placeholder="Buscar por nome ou nº de registro">
                     </div>
-                    <div id="lista-clientes-caderneta" class="space-y-4"></div>
+                    <div id="lista-clientes-caderneta" class="space-y-3"></div>
                 </div>
             </div>
 
+            <!-- MODAL NOVO CLIENTE CADERNETA -->
+            <div id="modal-novo-cliente-caderneta" class="fixed inset-0 z-[90] hidden bg-black/60 p-3 md:p-6 overflow-y-auto">
+                <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
+                    <div class="p-5 border-b flex items-center justify-between"><div><h3 class="font-black text-slate-800">Novo Cliente</h3><p class="text-xs text-slate-500">Um novo registro de fiado na caderneta.</p></div><button onclick="fecharNovoClienteCaderneta()" class="text-slate-500 text-xl">✕</button></div>
+                    <form onsubmit="adicionarCaderneta(event)" class="p-5 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nº de Registro</label><input type="text" id="cad-registro" required class="w-full border border-slate-300 rounded-lg p-3 text-sm" placeholder="Ex: 000123" inputmode="numeric" onblur="preencherClientePorRegistro()"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nome do Cliente / Loja</label><input type="text" id="cad-cliente" required class="w-full border border-slate-300 rounded-lg p-3 text-sm" placeholder="Nome do cliente"></div>
+                        </div>
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Logo do Cliente (opcional)</label><input type="file" id="cad-logo-cliente" accept="image/*" class="w-full text-xs text-slate-500"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Produto / Variação / SKU</label><select id="cad-sku" required class="w-full border border-slate-300 rounded-lg p-3 text-sm bg-white"></select><p class="text-[10px] text-slate-400 mt-1">O nome do produto é preenchido automaticamente a partir da variação escolhida.</p></div>
+                        <div class="grid grid-cols-2 gap-3"><div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Quantidade</label><input type="number" id="cad-qtd" min="1" value="1" required class="w-full border border-slate-300 rounded-lg p-3 text-sm"></div><div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Valor Devido (R$)</label><input type="number" step="0.01" id="cad-valor" required class="w-full border border-slate-300 rounded-lg p-3 text-sm" placeholder="0.00"></div></div>
+                        <input type="hidden" id="cad-descricao" value="">
+                        <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700">Criar cliente e adicionar produto</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- MODAL DETALHES DO CLIENTE -->
+            <div id="modal-detalhes-caderneta" class="fixed inset-0 z-[91] hidden bg-slate-950/70 p-2 md:p-6 overflow-y-auto">
+                <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden min-h-full md:min-h-0">
+                    <div id="detalhes-caderneta-conteudo"></div>
+                </div>
+            </div>
             <!-- ABA GERENCIAR & AJUSTAR -->
             <div id="secao-gerenciar" class="space-y-6 hidden">
                 <h1 id="titulo-gerenciar" class="text-xl md:text-2xl font-bold text-slate-800">Gerenciar, Ajustar, Operadores e Supabase</h1>
@@ -1339,22 +1321,55 @@ window.escapeHtml = window.escapeHtml || function(v) {
             renderizar();
         }
 
+        function abrirNovoClienteCaderneta() {
+            const m=document.getElementById('modal-novo-cliente-caderneta'); if(m) m.classList.remove('hidden');
+            gerarRegistroClienteAutomatico();
+            const sel=document.getElementById('cad-sku'); if(sel){ sel.innerHTML='<option value="">Selecione o produto...</option>'+banco.variacoes.map(v=>{const pb=banco.produtosBase.find(p=>p.id===v.produtoBaseId)||{}; return `<option value="${v.sku}">${pb.nome||'Produto'} — ${v.sku} (${v.atributo||'Sem variação'}) [Est: ${v.quantidade}]</option>`}).join(''); }
+        }
+        function fecharNovoClienteCaderneta(){ document.getElementById('modal-novo-cliente-caderneta')?.classList.add('hidden'); }
+        function fecharDetalhesCaderneta(){ document.getElementById('modal-detalhes-caderneta')?.classList.add('hidden'); }
+        function escapeCad(v){ return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+        function abrirDetalhesCaderneta(nomeCliente){
+            const cliente=banco.clientes.find(c=>c.nome.toLowerCase()===nomeCliente.toLowerCase())||{};
+            const itens=banco.caderneta.filter(c=>c.cliente.toLowerCase()===nomeCliente.toLowerCase());
+            const pendentes=itens.filter(i=>!i.pago); const saldo=pendentes.reduce((a,i)=>a+(Number(i.valor)||0),0);
+            const datas=[...itens].sort((a,b)=>new Date(b.dataHoraCompra||0)-new Date(a.dataHoraCompra||0));
+            const ultimo=datas[0];
+            let grupos={};
+            itens.slice().sort((a,b)=>new Date(b.dataHoraCompra||0)-new Date(a.dataHoraCompra||0)).forEach(i=>{
+                const d=i.dataHoraCompra?new Date(i.dataHoraCompra):null; const chave=d&&!isNaN(d)?d.toLocaleDateString('pt-BR'):(i.dataCompra||'Data não informada');
+                (grupos[chave] ||= []).push(i);
+            });
+            let hist=''; Object.entries(grupos).forEach(([data,arr])=>{ hist+=`<div class="mb-5"><div class="text-xs font-black text-slate-500 uppercase border-b pb-2 mb-2">${escapeCad(data)}</div><div class="space-y-2">`; arr.forEach(i=>{const d=i.dataHoraCompra?new Date(i.dataHoraCompra):null; const hora=d&&!isNaN(d)?d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):''; const pb=banco.produtosBase.find(p=>p.id===i.produtoBaseId); const vari=banco.variacoes.find(v=>v.sku===i.sku); const nome= i.descricao || `${pb?.nome||'Produto'}${vari?.atributo?` (${vari.atributo})`:''}`; hist+=`<div class="border rounded-xl p-3 bg-slate-50"><div class="flex justify-between gap-3"><div><p class="font-bold text-sm text-slate-800">${escapeCad(nome)}</p><p class="text-[10px] text-slate-500 mt-1">${hora?hora+' · ':''}${i.sku?'SKU '+escapeCad(i.sku):''}${vari?.atributo?' · '+escapeCad(vari.atributo):''}${i.quantidade?' · '+i.quantidade+' un.':''}</p></div><div class="text-right"><p class="font-black">R$ ${(Number(i.valor)||0).toFixed(2)}</p><span class="text-[10px] font-bold ${i.pago?'text-emerald-600':'text-amber-600'}">${i.pago?'PAGO':'EM ABERTO'}</span></div></div><div class="mt-2 flex flex-wrap gap-1"><button onclick="trocarItemCaderneta('${i.id}')" class="bg-amber-100 text-amber-800 px-2 py-1 rounded text-[10px]">Troca</button><button onclick="alternarStatusItem('${i.id}'); abrirDetalhesCaderneta('${escapeCad(nomeCliente).replace(/'/g,"\\'")}')" class="bg-slate-200 px-2 py-1 rounded text-[10px]">${i.pago?'Reabrir':'Pago'}</button>${currentUserRole==='admin'?`<button onclick="excluirItemCaderneta('${i.id}'); abrirDetalhesCaderneta('${escapeCad(nomeCliente).replace(/'/g,"\\'")}')" class="bg-red-500 text-white px-2 py-1 rounded text-[10px]">Excluir</button>`:''}</div></div>`}); hist+='</div></div>'; });
+            const m=document.getElementById('modal-detalhes-caderneta'); const box=document.getElementById('detalhes-caderneta-conteudo'); if(!m||!box)return;
+            box.innerHTML=`<div class="p-5 border-b bg-white"><div class="flex items-start justify-between gap-3"><div class="flex items-center gap-3"><img src="${escapeCad(cliente.logo||banco.logoLoja)}" class="w-14 h-14 rounded-xl object-cover border" onerror="this.style.display='none'"><div><h2 class="text-xl font-black text-slate-800">${escapeCad(nomeCliente)}</h2><p class="text-xs text-slate-500">Registro #${escapeCad(cliente.registro||itens.find(i=>i.registroCliente)?.registroCliente||'—')}</p></div></div><button onclick="fecharDetalhesCaderneta()" class="text-slate-500 text-xl">✕</button></div><div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4"><div class="bg-amber-50 rounded-xl p-3"><p class="text-[10px] uppercase font-bold text-amber-700">Saldo aberto</p><b class="text-lg text-amber-800">R$ ${saldo.toFixed(2)}</b></div><div class="bg-slate-50 rounded-xl p-3"><p class="text-[10px] uppercase font-bold text-slate-500">Lançamentos</p><b>${itens.length}</b></div><div class="bg-slate-50 rounded-xl p-3"><p class="text-[10px] uppercase font-bold text-slate-500">Último lançamento</p><b>${ultimo?.dataHoraCompra?new Date(ultimo.dataHoraCompra).toLocaleDateString('pt-BR'):(ultimo?.dataCompra||'—')}</b></div><div class="bg-slate-50 rounded-xl p-3"><p class="text-[10px] uppercase font-bold text-slate-500">Pendências</p><b>${pendentes.length}</b></div></div><div class="flex flex-wrap gap-2 mt-4"><button onclick="abrirAdicionarProdutoCliente('${escapeCad(nomeCliente).replace(/'/g,"\\'")}')" class="bg-emerald-600 text-white font-bold px-3 py-2 rounded-lg text-xs">＋ Adicionar produtos</button><button onclick="abaterValorParcial('${escapeCad(nomeCliente).replace(/'/g,"\\'")}')" class="bg-blue-600 text-white font-bold px-3 py-2 rounded-lg text-xs">Abater valor</button><button onclick="compartilharExtratoWhatsApp('${escapeCad(nomeCliente).replace(/'/g,"\\'")}')" class="bg-emerald-100 text-emerald-800 font-bold px-3 py-2 rounded-lg text-xs">WhatsApp</button><button onclick="quitarClienteInteiro('${escapeCad(nomeCliente).replace(/'/g,"\\'")}'); abrirDetalhesCaderneta('${escapeCad(nomeCliente).replace(/'/g,"\\'")}')" class="bg-slate-800 text-white font-bold px-3 py-2 rounded-lg text-xs">Quitar conta</button></div></div><div class="p-5"><h3 class="font-black text-slate-800 mb-4">Histórico da conta</h3>${hist||'<p class="text-sm text-slate-400">Nenhum lançamento.</p>'}</div>`; m.classList.remove('hidden');
+        }
+        function abrirAdicionarProdutoCliente(nomeCliente){
+            const old=document.getElementById('modal-adicionar-produto-cliente'); if(old) old.remove();
+            const div=document.createElement('div'); div.id='modal-adicionar-produto-cliente'; div.className='fixed inset-0 z-[100] bg-black/60 p-3 flex items-center justify-center';
+            div.innerHTML=`<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-5"><div class="flex justify-between"><div><h3 class="font-black">Adicionar produto à conta</h3><p class="text-xs text-slate-500">Cliente: ${escapeCad(nomeCliente)}</p></div><button onclick="this.closest('#modal-adicionar-produto-cliente').remove()" class="text-slate-500">✕</button></div><form onsubmit="adicionarProdutoCliente(event,'${escapeCad(nomeCliente).replace(/'/g,"\\'")}')" class="space-y-3 mt-4"><select id="cad-add-sku" required class="w-full border rounded-lg p-3 text-sm"><option value="">Selecione a variação / SKU...</option>${banco.variacoes.map(v=>{const pb=banco.produtosBase.find(p=>p.id===v.produtoBaseId)||{};return `<option value="${v.sku}">${escapeCad(pb.nome||'Produto')} — ${escapeCad(v.sku)} (${escapeCad(v.atributo||'Sem variação')}) [Est: ${v.quantidade}]</option>`}).join('')}</select><div class="grid grid-cols-2 gap-3"><input id="cad-add-qtd" type="number" min="1" value="1" required class="border rounded-lg p-3 text-sm" placeholder="Quantidade"><input id="cad-add-valor" type="number" step="0.01" min="0" required class="border rounded-lg p-3 text-sm" placeholder="Valor devido"></div><button class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg">Adicionar à conta</button></form></div>`; document.body.appendChild(div);
+        }
+        async function adicionarProdutoCliente(e,nomeCliente){
+            e.preventDefault(); const sku=document.getElementById('cad-add-sku').value; const qtd=Math.max(1,parseInt(document.getElementById('cad-add-qtd').value)||1); const valor=parseFloat(document.getElementById('cad-add-valor').value); const v=banco.variacoes.find(x=>x.sku===sku); if(!v||isNaN(valor)||valor<0)return alert('Produto ou valor inválido.'); const pb=banco.produtosBase.find(p=>p.id===v.produtoBaseId)||{nome:'Produto'}; const cliente=banco.clientes.find(c=>c.nome.toLowerCase()===nomeCliente.toLowerCase())||{}; v.quantidade-=qtd; const agora=new Date(); banco.caderneta.push({id:'CAD-'+Date.now(),cliente:nomeCliente,registroCliente:cliente.registro||'',logoCliente:cliente.logo||'',sku,produtoBaseId:v.produtoBaseId,quantidade:qtd,descricao:`${pb.nome}${v.atributo?` (${v.atributo})`:''}`,valor,pago:false,dataHoraCompra:agora.toISOString(),dataCompra:`Comprado em ${agora.toLocaleDateString('pt-BR')} às ${agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`,dataQuitacao:null}); registrarHistoricoMovimentacao(`CADERNETA — ${nomeCliente}: ${qtd} un(s) de ${pb.nome} (${sku}) adicionadas à conta. Estoque -${qtd}.`); salvarBanco(); renderizar(); document.getElementById('modal-adicionar-produto-cliente')?.remove(); abrirDetalhesCaderneta(nomeCliente); if(v.quantidade<0) alert('Produto adicionado. O estoque ficou negativo e a divergência foi registrada no Histórico.');
+        }
+
         async function adicionarCaderneta(e) {
             e.preventDefault();
 
             const registro = document.getElementById('cad-registro').value.trim();
             const clienteInput = document.getElementById('cad-cliente').value.trim();
-            const descricao = document.getElementById('cad-descricao').value.trim();
+            const descricaoManual = document.getElementById('cad-descricao')?.value.trim() || '';
             const sku = document.getElementById('cad-sku').value;
             const qtd = Math.max(1, parseInt(document.getElementById('cad-qtd').value) || 1);
             const valor = parseFloat(document.getElementById('cad-valor').value);
 
-            if(!registro || !clienteInput || !descricao || !sku || isNaN(valor) || valor < 0) return;
+            if(!registro || !clienteInput || !sku || isNaN(valor) || valor < 0) return;
 
             const variacao = banco.variacoes.find(v => v.sku === sku);
             if(!variacao) { alert('Produto/SKU não encontrado.'); return; }
 
             const pb = banco.produtosBase.find(p => p.id === variacao.produtoBaseId) || { nome: 'Produto' };
+            const descricao = descricaoManual || `${pb.nome}${variacao.atributo ? ` (${variacao.atributo})` : ''}`;
             const clienteNome = clienteInput.charAt(0).toUpperCase() + clienteInput.slice(1);
             const arquivoLogo = document.getElementById('cad-logo-cliente')?.files?.[0];
 
@@ -1389,6 +1404,7 @@ window.escapeHtml = window.escapeHtml || function(v) {
                 descricao,
                 valor,
                 pago: false,
+                dataHoraCompra: agora.toISOString(),
                 dataCompra: `Comprado em ${agora.toLocaleDateString('pt-BR')} às ${agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`,
                 dataQuitacao: null
             };
@@ -1870,65 +1886,22 @@ window.escapeHtml = window.escapeHtml || function(v) {
 
             let totalCad = 0;
             const buscaCad = (document.getElementById('busca-caderneta')?.value || '').trim().toLowerCase();
-            const clientesNomes = [...new Set(banco.caderneta.map(c => c.cliente))];
-
-            const clientesFiltrados = clientesNomes.filter(cli => {
-                const registro = banco.clientes.find(c => c.nome.toLowerCase() === cli.toLowerCase())?.registro
-                    || banco.caderneta.find(c => c.cliente.toLowerCase() === cli.toLowerCase())?.registroCliente
-                    || '';
+            const clientesMap = new Map();
+            (banco.clientes || []).forEach(c => clientesMap.set(c.nome.toLowerCase(), c.nome));
+            (banco.caderneta || []).forEach(i => { if(i.cliente) clientesMap.set(i.cliente.toLowerCase(), i.cliente); });
+            const clientesFiltrados = [...clientesMap.values()].filter(cli => {
+                const registro = banco.clientes.find(c => c.nome.toLowerCase() === cli.toLowerCase())?.registro || banco.caderneta.find(c => c.cliente.toLowerCase() === cli.toLowerCase())?.registroCliente || '';
                 return !buscaCad || cli.toLowerCase().includes(buscaCad) || String(registro).toLowerCase().includes(buscaCad);
             });
-
-            if(document.getElementById('lista-sugestao-clientes')) {
-                document.getElementById('lista-sugestao-clientes').innerHTML = clientesNomes.map(c => `<option value="${c}">`).join('');
-            }
-
-            const selCadSku = document.getElementById('cad-sku');
-            if(selCadSku) {
-                selCadSku.innerHTML = '<option value="">Selecione o produto...</option>' + banco.variacoes.map(v => {
-                    const pb = banco.produtosBase.find(p => p.id === v.produtoBaseId) || {};
-                    return `<option value="${v.sku}">${pb.nome || 'Produto'} — ${v.sku} (${v.atributo}) [Est: ${v.quantidade}]</option>`;
-                }).join('');
-            }
-
             let htmlCad = '';
             clientesFiltrados.forEach(cli => {
-                const itens = banco.caderneta.filter(c => c.cliente === cli);
-                const cadastroCliente = banco.clientes.find(c => c.nome.toLowerCase() === cli.toLowerCase()) || {};
-                const registroCliente = cadastroCliente.registro || itens.find(i => i.registroCliente)?.registroCliente || '—';
-                const logoCliente = cadastroCliente.logo || itens.find(i => i.logoCliente)?.logoCliente || banco.logoLoja;
-                let subCli = 0;
-                let itensHtml = '';
-
-                itens.forEach(i => {
-                    if(!i.pago) subCli += i.valor;
-                    totalCad += (!i.pago ? i.valor : 0);
-                    itensHtml += `<div class="flex justify-between items-center p-2 bg-slate-50 rounded text-xs">
-                        <span><b>${i.quantidade ? `${i.quantidade}x ` : ''}${i.descricao}</b> ${i.pago ? '<span class="text-emerald-600">[Pago]</span>' : ''}</span>
-                        <div class="space-x-1"><span class="font-bold">R$ ${i.valor.toFixed(2)}</span>
-                        <button onclick="trocarItemCaderneta('${i.id}')" class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded">Troca</button><button onclick="alternarStatusItem('${i.id}')" class="bg-slate-200 px-1.5 py-0.5 rounded">🔁</button>
-                        ${currentUserRole === 'admin' ? `<button onclick="excluirItemCaderneta('${i.id}')" class="bg-red-500 text-white px-1.5 py-0.5 rounded">✕</button>` : ''}</div>
-                    </div>`;
-                });
-
-                htmlCad += `<div class="border rounded-xl p-4 space-y-2 bg-white">
-                    <div class="flex justify-between items-center border-b pb-2 gap-2">
-                        <div class="flex items-center gap-2">
-                            <img src="${logoCliente}" class="w-9 h-9 rounded-lg object-cover border" alt="Logo Cliente">
-                            <h4 class="font-black text-sm">${cli} <span class="text-slate-400 font-normal">#${registroCliente}</span> (<span class="text-amber-700">R$ ${subCli.toFixed(2)}</span>)</h4>
-                        </div>
-                        <div class="space-x-1">
-                            <button onclick="abaterValorParcial('${cli.replace(/'/g, "\\'")}')" class="bg-blue-600 text-white px-2 py-1 rounded text-xs">Abater</button>
-                            <button onclick="compartilharExtratoWhatsApp('${cli.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-xs">WhatsApp</button>
-                            <button onclick="quitarClienteInteiro('${cli.replace(/'/g, "\\'")}')" class="bg-slate-800 text-white px-2 py-1 rounded text-xs">Quitar</button>
-                        </div>
-                    </div>
-                    <div class="space-y-1">${itensHtml}</div>
-                </div>`;
+                const itens=banco.caderneta.filter(c=>c.cliente.toLowerCase()===cli.toLowerCase());
+                const cadastro=banco.clientes.find(c=>c.nome.toLowerCase()===cli.toLowerCase())||{};
+                const registro=cadastro.registro||itens.find(i=>i.registroCliente)?.registroCliente||'—'; const logo=cadastro.logo||itens.find(i=>i.logoCliente)?.logoCliente||banco.logoLoja; const pend=itens.filter(i=>!i.pago); const saldo=pend.reduce((a,i)=>a+(Number(i.valor)||0),0); totalCad+=saldo; const ultimo=itens.slice().sort((a,b)=>new Date(b.dataHoraCompra||0)-new Date(a.dataHoraCompra||0))[0];
+                htmlCad+=`<button type="button" onclick="abrirDetalhesCaderneta('${cli.replace(/'/g,"\'")}')" class="w-full text-left border rounded-xl p-4 bg-white hover:border-emerald-400 hover:shadow-md transition"><div class="flex items-center gap-3"><img src="${escapeCad(logo)}" class="w-11 h-11 rounded-xl object-cover border" onerror="this.style.display='none'"><div class="min-w-0 flex-1"><div class="flex flex-wrap items-center gap-2"><h4 class="font-black text-sm text-slate-800">${escapeCad(cli)}</h4><span class="text-[10px] text-slate-400">#${escapeCad(registro)}</span></div><p class="text-[10px] text-slate-400 mt-1">${itens.length} lançamento(s) · ${pend.length} pendente(s)${ultimo?.dataHoraCompra?' · Último: '+new Date(ultimo.dataHoraCompra).toLocaleDateString('pt-BR'):''}</p></div><div class="text-right"><p class="text-[10px] uppercase font-bold text-slate-400">Em aberto</p><p class="font-black text-amber-700">R$ ${saldo.toFixed(2)}</p><span class="text-[10px] text-emerald-600 font-bold">Ver conta →</span></div></div></button>`;
             });
-
-            if(document.getElementById('card-total-caderneta')) document.getElementById('card-total-caderneta').innerText = `R$ ${totalCad.toFixed(2)}`;
-            if(document.getElementById('lista-clientes-caderneta')) document.getElementById('lista-clientes-caderneta').innerHTML = htmlCad || `<span class="text-slate-400 text-xs">Nenhum registro encontrado.</span>`;
+            if(document.getElementById('card-total-caderneta')) document.getElementById('card-total-caderneta').innerText=`R$ ${totalCad.toFixed(2)}`;
+            if(document.getElementById('lista-clientes-caderneta')) document.getElementById('lista-clientes-caderneta').innerHTML=htmlCad||`<div class="text-center py-8 text-slate-400 text-sm">Nenhum cliente encontrado.</div>`;
 
             let htmlGer = '';
             banco.produtosBase.forEach(pb => {

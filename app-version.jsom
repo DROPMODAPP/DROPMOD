@@ -1,1 +1,8 @@
-
+{
+  "versionCode": 3,
+  "versionName": "1.2",
+  "apkUrl": "https://dropmodapp.github.io/DROPMOD.APP/DROP-MOD-PUBLICO.apk",
+  "title": "Nova atualização do DROP MOD",
+  "notes": "Nova versão do DROP MOD Público disponível.",
+  "mandatory": false
+}
